@@ -33,10 +33,10 @@ import Table from "examples/Tables/Table";
 import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 
-function Tables() {
+function Tables({showAllJadwal}) {
   const { columns, rows } = authorsTableData;
   const { columns: prCols, rows: prRows } = projectsTableData;
-
+  // console.log(showAllJadwal,'b')
   return (
     <DashboardLayout>
       <DashboardNavbar />

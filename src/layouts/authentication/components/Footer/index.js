@@ -49,7 +49,7 @@ function Footer() {
             sx={{ textAlign: "center", fontWeight: "400 !important" }}
             color="text"
           >
-            @ 2021, Made with ❤️&nbsp;&nbsp;&nbsp; by{" "}
+            @ 2024, 
             <VuiTypography
               component="a"
               variant="button"
@@ -58,9 +58,9 @@ function Footer() {
               color="text"
               mr="2px"
             >
-              Simmmple
+              &nbsp; Lembaga Sertifikasi Profesi <br/>
             </VuiTypography>
-            &
+            {/* & */}
             <VuiTypography
               ml="2px"
               mr="2px"
@@ -70,30 +70,12 @@ function Footer() {
               sx={{ textAlign: "center", fontWeight: "500 !important" }}
               color="text"
             >
-              Creative Tim
+              {/* Creative Tim */}
             </VuiTypography>
-            for a better web
+            Universitas Pembangunan Nasional Veteran Jakarta
           </VuiTypography>
         </Grid>
-        <Grid item xs={10}>
-          <VuiBox display="flex" justifyContent="center" flexWrap="wrap" mb={3}>
-            <VuiBox mr={{ xs: "20px", lg: "46px" }}>
-              <VuiTypography component="a" href="#" variant="body2" color="text">
-                Marketplace
-              </VuiTypography>
-            </VuiBox>
-            <VuiBox mr={{ xs: "20px", lg: "46px" }}>
-              <VuiTypography component="a" href="#" variant="body2" color="text">
-                Blog
-              </VuiTypography>
-            </VuiBox>
-            <VuiBox>
-              <VuiTypography component="a" href="#" variant="body2" color="text">
-                License
-              </VuiTypography>
-            </VuiBox>
-          </VuiBox>
-        </Grid>
+        
       </Grid>
     </VuiBox>
   );

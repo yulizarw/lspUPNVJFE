@@ -39,14 +39,14 @@ function TimelineItem({ color, icon, title, dateTime, description, badges, lastI
   const renderBadges =
     badges.length > 0
       ? badges.map((badge, key) => {
-          const badgeKey = `badge-${key}`;
+        const badgeKey = `badge-${key}`;
 
-          return (
-            <VuiBox key={badgeKey} mr={key === badges.length - 1 ? 0 : 0.5}>
-              <VuiBadge color={color} size="xs" badgeContent={badge} container />
-            </VuiBox>
-          );
-        })
+        return (
+          <VuiBox key={badgeKey} mr={key === badges.length - 1 ? 0 : 0.5}>
+            <VuiBadge color={color} size="xs" badgeContent={badge} container />
+          </VuiBox>
+        );
+      })
       : null;
 
   return (
@@ -67,8 +67,24 @@ function TimelineItem({ color, icon, title, dateTime, description, badges, lastI
           {title}
         </VuiTypography>
         <VuiBox mt={0.5}>
-          <VuiTypography variant="caption" fontWeight="medium" color="text">
+          <VuiTypography variant="caption" fontWeight="medium" color="text" sx={{
+            mr: "5px",
+            display: "inline-flex",
+            alignItems: "center",
+            cursor: "pointer",
+
+            "& .material-icons-round": {
+              fontSize: "1.125rem",
+              transform: `translate(2px, -0.5px)`,
+              transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
+            },
+
+            "&:hover .material-icons-round, &:focus  .material-icons-round": {
+              transform: `translate(6px, -0.5px)`,
+            },
+          }}>
             {dateTime}
+            <Icon sx={{ fontWeight: "bold", ml: "5px" }}>arrow_forward</Icon>
           </VuiTypography>
         </VuiBox>
         <VuiBox mt={2} mb={1.5}>

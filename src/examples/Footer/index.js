@@ -37,7 +37,7 @@ function Footer() {
           sx={{ textAlign: "center", fontWeight: "400 !important" }}
           color="white"
         >
-          @ 2021, Made with ❤️&nbsp;&nbsp;&nbsp; by{" "}
+          @ 2024, Made with ❤️&nbsp;&nbsp;&nbsp; by{" "}
           <VuiTypography
             component="a"
             variant="button"
@@ -46,7 +46,7 @@ function Footer() {
             color="white"
             mr="2px"
           >
-            Simmmple
+            LSP UPN Veteran Jakarta
           </VuiTypography>
           &
           <VuiTypography
@@ -58,12 +58,12 @@ function Footer() {
             sx={{ textAlign: "center", fontWeight: "500 !important" }}
             color="white"
           >
-            Creative Tim
+            Sertifikasi Profesi
           </VuiTypography>
-          for a better web
+          untuk insan inovasi
         </VuiTypography>
       </VuiBox>
-      <VuiBox item xs={10}>
+      {/* <VuiBox item xs={10}>
         <VuiBox display="flex" justifyContent="center" flexWrap="wrap" mb={3}>
           <VuiBox mr={{ xs: "20px", lg: "46px" }}>
             <VuiTypography
@@ -96,7 +96,7 @@ function Footer() {
             </VuiTypography>
           </VuiBox>
         </VuiBox>
-      </VuiBox>
+      </VuiBox> */}
     </VuiBox>
   );
 }

@@ -25,6 +25,7 @@ export default {
   // Vision UI Colors
   background: {
     default: "#f8f9fa",
+    
   },
 
   sidenav: {

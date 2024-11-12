@@ -16,10 +16,12 @@
 
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "store/action/userAction";
 
 // @mui material components
 import Icon from "@mui/material/Icon";
@@ -48,20 +50,96 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
 import bgSignIn from "assets/images/signUpImage.png";
+import picSignUp from "assets/images/signUp4.jpg"
 
-function SignIn() {
+function SignUp() {
+
   const [rememberMe, setRememberMe] = useState(true);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const [asesor, setAsesor] = useState(false);
+  const handleAsesor = () => {
+    setAsesor(!asesor);
+    if (!asesor) {
+      setFormInput({ ...formInput, userRole: 'Asesor' })
+    } else {
+      setFormInput({ ...formInput, userRole: 'Peserta Ujikom' })
+    }
+  }
+  const history = useHistory()
+  const dispatch = useDispatch()
 
+  const [formInput, setFormInput] = useState({
+    userName: "",
+    password: "",
+    userEmail: "",
+    userPhoto: "",
+    userDepartment: "",
+    userPhone: "",
+    userBirthdate: "",
+    userDomisili: "",
+    sptAsesor: "",
+    userRole: "Peserta Ujikom"
+  });
+  const userNameInput = (input) => {
+    const userName = formInput.userName;
+    setFormInput({ ...formInput, userName: input.target.value });
+  };
+  const passwordInput = (input) => {
+    const password = formInput.password;
+    setFormInput({ ...formInput, password: input.target.value })
+  }
+  const emailInput = (input) => {
+    const userEmail = formInput.userEmail;
+    setFormInput({ ...formInput, userEmail: input.target.value })
+  }
+  const photoInput = (input) => {
+    const userPhoto = formInput.userPhoto;
+    setFormInput({ ...formInput, userPhoto: input.target.value })
+  }
+  const departmentInput = (input) => {
+    const userDepartment = formInput.userDepartment;
+    setFormInput({ ...formInput, userDepartment: input.target.value })
+  }
+  const phoneInput = (input) => {
+    const userPhone = formInput.userPhone;
+    setFormInput({ ...formInput, userphone: input.target.value })
+  }
+  const birthDateInput = (input) => {
+    const userBirthdate = formInput.userBirthdate;
+    setFormInput({ ...formInput, userBirthdate: input.target.value })
+  }
+  const domisiliInput = (input) => {
+    const userDomisili = formInput.userDomisili;
+    setFormInput({ ...formInput, userDomisili: input.target.value })
+  }
+  const sptInput = (input) => {
+    const sptAsesor = formInput.sptAsesor;
+    setFormInput({ ...formInput, sptAsesor: input.target.value })
+
+  }
+  const roleInput = (input) => {
+    const userRole = formInput.userRole;
+    setFormInput({ ...formInput, userRole: input.target.value })
+
+  }
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    dispatch(registerUser(formInput))
+    history.push('/')
+  }
+
+
+  console.log(formInput)
   return (
     <CoverLayout
-      title="Welcome!"
+      title="Selamat Datang !"
       color="white"
-      description="Use these awesome forms to login or create new account in your project for free."
-      image={bgSignIn}
-      premotto="INSPIRED BY THE FUTURE:"
-      motto="THE VISION UI DASHBOARD"
+      description="Silahkan Buat Akun Anda untuk melanjutkan"
+      image={picSignUp}
+      premotto="Lembaga Sertifikasi Profesi UPN Veteran Jakarta"
+      motto="Bela Negara"
       cardContent
     >
       <GradientBorder borderRadius={borders.borderRadius.form} minWidth="100%" maxWidth="100%">
@@ -73,6 +151,7 @@ function SignIn() {
           sx={({ palette: { secondary } }) => ({
             backgroundColor: secondary.focus,
           })}
+          onSubmit={onSubmit}
         >
           <VuiTypography
             color="white"
@@ -180,10 +259,11 @@ function SignIn() {
           >
             or
           </VuiTypography>
+
           <VuiBox mb={2}>
             <VuiBox mb={1} ml={0.5}>
               <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
-                Name
+                User Name
               </VuiTypography>
             </VuiBox>
             <GradientBorder
@@ -197,10 +277,11 @@ function SignIn() {
               )}
             >
               <VuiInput
-                placeholder="Your full name..."
+                placeholder="User Name..."
                 sx={({ typography: { size } }) => ({
                   fontSize: size.sm,
                 })}
+                onChange={userNameInput}
               />
             </GradientBorder>
           </VuiBox>
@@ -222,10 +303,11 @@ function SignIn() {
             >
               <VuiInput
                 type="email"
-                placeholder="Your email..."
+                placeholder="Gunakan email @upnvj.ac.id..."
                 sx={({ typography: { size } }) => ({
                   fontSize: size.sm,
                 })}
+                onChange={emailInput}
               />
             </GradientBorder>
           </VuiBox>
@@ -247,12 +329,182 @@ function SignIn() {
             >
               <VuiInput
                 type="password"
-                placeholder="Your password..."
+                placeholder="Masukkan password..."
                 sx={({ typography: { size } }) => ({
                   fontSize: size.sm,
                 })}
+                onChange={passwordInput}
               />
             </GradientBorder>
+          </VuiBox>
+          <VuiBox mb={2}>
+            <VuiBox mb={1} ml={0.5}>
+              <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                Pas Photo
+              </VuiTypography>
+            </VuiBox>
+            <GradientBorder
+              minWidth="100%"
+              borderRadius={borders.borderRadius.lg}
+              padding="1px"
+              backgroundImage={radialGradient(
+                palette.gradients.borderLight.main,
+                palette.gradients.borderLight.state,
+                palette.gradients.borderLight.angle
+              )}
+            >
+              <VuiInput
+                type="url"
+                placeholder="link pas photo ..."
+                sx={({ typography: { size } }) => ({
+                  fontSize: size.sm,
+                })}
+                onChange={photoInput}
+              />
+            </GradientBorder>
+          </VuiBox>
+          <VuiBox mb={2}>
+
+
+            <div class="flex items-center space-x-4 mr-4 " >
+              <div class="flex items-center space-x-4 " >
+                <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                Program Studi / Department Tempat Kerja :
+                </VuiTypography>
+              </div>
+              <div class="flex items-center space-x-4 mb-2" onChange={departmentInput}>
+                <select class="w-full p-2 rounded">
+                  <option value="" disabled selected>Jurusan Keilmuan</option>
+                  <option value="Ilmu Pengetahuan Alam">Ilmu Pengetahuan Alam</option>
+                  <option value="Ilmu Pengetahuan Sosial">Ilmu Pengetahuan Sosial</option>
+                  <option value="" disabled selected>Fakultas Ekonomi dan Bisnis</option>
+                  <option value="D-3 Perbankan dan Keuangan">D-3 Perbankan dan Keuangan</option>
+                  <option value="D-3 Akuntansi">D-3 Akuntansi</option>
+                  <option value="S-1 Akuntansi">S-1 Akuntansi</option>
+                  <option value="S-1 Manajemen">S-1 Manajemen</option>
+                  <option value="S-1 Ekonomi Pembangunan">S-1 Ekonomi Pembangunan</option>
+                  <option value="S-1 Ekonomi Syariah">S-1 Ekonomi Syariah</option>
+                  <option value="" disabled selected>Fakultas Kedokteran</option>
+                  <option value="S-1 Kedokteran">S-1 Kedokteran</option>
+                  <option value="S-1 Farmasi">S-1 Farmasi</option>
+                  <option value="" disabled selected>Fakultas Teknik</option>
+                  <option value="S-1 Teknik Industri">S-1 Teknik Industri</option>
+                  <option value="S-1 Teknik Mesin">S-1 Teknik Mesin</option>
+                  <option value="S-1 Teknik Perkapalan">S-1 Teknik Perkapalan</option>
+                  <option value="S-1 Teknik Elektro">S-1 Teknik Elektro</option>
+                  <option value="" disabled selected>Fakultas Ilmu Sosial dan Ilmu Politk</option>
+                  <option value="S-1 Ilmu Komunikasi">S-1 Ilmu Komunikasi</option>
+                  <option value="S-1 Hubungan Internasional">S-1 Hubungan Internasional</option>
+                  <option value="S-1 Ilmu Politik">S-1 Ilmu Politik</option>
+                  <option value="S-1 Sains Informasi">S-1 Sains Informasi</option>
+                  <option value="" disabled selected>Fakultas Ilmu Komputer</option>
+                  <option value="D-3 Sistem Informasi">D-3 Sistem Informasi</option>
+                  <option value="S-1 Sistem Informasi">S-1 Sistem Informasi</option>
+                  <option value="S-1 Informatika">S-1 Informatika</option>
+                  <option value="" disabled selected>Fakultas Hukum</option>
+                  <option value="S-1 Hukum">S-1 Hukum</option>
+                  <option value="" disabled selected>Fakultas Ilmu Kesehatan</option>
+                  <option value="D-3 Keperawatan">D-3 Keperawatan</option>
+                  <option value="D-3 Fisioterapi">D-3 Fisioterapi</option>
+                  <option value="S-1 Fisioterapi">S-1 Fisioterapi</option>
+                  <option value="S-1 Keperawatan">S-1 Keperawatan</option>
+                  <option value="S-1 Kesehatan Masyarakat">S-1 Kesehatan Masyarakat</option>
+                  <option value="S-1 Gizi">S-1 Gizi</option>
+                </select>
+              </div>
+            </div>
+          </VuiBox>
+
+     
+          <VuiBox mb={2}>
+            <VuiBox mb={1} ml={0.5}>
+              <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                Nomor Telephone
+              </VuiTypography>
+            </VuiBox>
+            <GradientBorder
+              minWidth="100%"
+              borderRadius={borders.borderRadius.lg}
+              padding="1px"
+              backgroundImage={radialGradient(
+                palette.gradients.borderLight.main,
+                palette.gradients.borderLight.state,
+                palette.gradients.borderLight.angle
+              )}
+            >
+              <VuiInput
+                type="tel"
+                placeholder="Nomor Telephone ..."
+                sx={({ typography: { size } }) => ({
+                  fontSize: size.sm,
+                })}
+                onChange={phoneInput}
+              />
+            </GradientBorder>
+          </VuiBox>
+          <VuiBox mb={2}>
+            <VuiBox mb={1} ml={0.5}>
+              <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                Tanggal Lahir
+              </VuiTypography>
+            </VuiBox>
+            <GradientBorder
+              minWidth="100%"
+              borderRadius={borders.borderRadius.lg}
+              padding="1px"
+              backgroundImage={radialGradient(
+                palette.gradients.borderLight.main,
+                palette.gradients.borderLight.state,
+                palette.gradients.borderLight.angle
+              )}
+            >
+              <VuiInput
+                type="date"
+                placeholder="Tanggal Lahir ..."
+                sx={({ typography: { size } }) => ({
+                  fontSize: size.sm,
+                })}
+                onChange={birthDateInput}
+              />
+            </GradientBorder>
+          </VuiBox>
+          <VuiBox mb={2}>
+            <VuiBox mb={1} ml={0.5}>
+              <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                Domisili
+              </VuiTypography>
+            </VuiBox>
+            <GradientBorder
+              minWidth="100%"
+              borderRadius={borders.borderRadius.lg}
+              padding="1px"
+              backgroundImage={radialGradient(
+                palette.gradients.borderLight.main,
+                palette.gradients.borderLight.state,
+                palette.gradients.borderLight.angle
+              )}
+            >
+              <VuiInput
+                type="input"
+                placeholder="Domisili Saat Ini ..."
+                sx={({ typography: { size } }) => ({
+                  fontSize: size.sm,
+                })}
+                onChange={domisiliInput}
+              />
+            </GradientBorder>
+          </VuiBox>
+          <VuiBox display="flex" alignItems="center">
+            <VuiSwitch color="info" checked={asesor} onChange={handleAsesor} />
+            <VuiTypography
+              variant="caption"
+              color="white"
+              fontWeight="medium"
+              onClick={handleAsesor}
+              sx={{ cursor: "pointer", userSelect: "none" }}
+            >
+              &nbsp;&nbsp;&nbsp;&nbsp;Mendaftar Sebagai Asesor?
+            </VuiTypography>
           </VuiBox>
           <VuiBox display="flex" alignItems="center">
             <VuiSwitch color="info" checked={rememberMe} onChange={handleSetRememberMe} />
@@ -266,17 +518,46 @@ function SignIn() {
               &nbsp;&nbsp;&nbsp;&nbsp;Remember me
             </VuiTypography>
           </VuiBox>
+
+          {asesor === true && (
+            <VuiBox mb={2}>
+              <VuiBox mb={1} ml={0.5}>
+                <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                  SPT Asesor
+                </VuiTypography>
+              </VuiBox>
+              <GradientBorder
+                minWidth="100%"
+                borderRadius={borders.borderRadius.lg}
+                padding="1px"
+                backgroundImage={radialGradient(
+                  palette.gradients.borderLight.main,
+                  palette.gradients.borderLight.state,
+                  palette.gradients.borderLight.angle
+                )}
+              >
+                <VuiInput
+                  type="url"
+                  placeholder="Masukkan SPT Asesor Anda ..."
+                  sx={({ typography: { size } }) => ({
+                    fontSize: size.sm,
+                  })}
+                  onChange={sptInput}
+                />
+              </GradientBorder>
+            </VuiBox>
+          )}
           <VuiBox mt={4} mb={1}>
-            <VuiButton color="info" fullWidth>
+            <VuiButton color="info" fullWidth type="submit">
               SIGN UP
             </VuiButton>
           </VuiBox>
           <VuiBox mt={3} textAlign="center">
             <VuiTypography variant="button" color="text" fontWeight="regular">
-              Already have an account?{" "}
+              Sudah Punya Akun?{" "}
               <VuiTypography
                 component={Link}
-                to="/authentication/sign-in"
+                to="/"
                 variant="button"
                 color="white"
                 fontWeight="medium"
@@ -291,4 +572,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default SignUp;

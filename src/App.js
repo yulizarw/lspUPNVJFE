@@ -19,7 +19,15 @@
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Route, Switch, Redirect, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect, useLocation, Link } from "react-router-dom";
+
+
+import { Provider, useSelector } from "react-redux"
+import store from "./store/index"
+
+// route guard
+import LoginProtectedRoute from "components/routeGuard/LoginProtectedRoute";
+import ProtectedRoute from "components/routeGuard/ProtectedRoute";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -28,6 +36,9 @@ import Icon from "@mui/material/Icon";
 
 // Vision UI Dashboard React components
 import VuiBox from "components/VuiBox";
+// Vision UI Dashboard React components
+import VuiButton from "components/VuiButton";
+
 
 // Vision UI Dashboard React example components
 import Sidenav from "examples/Sidenav";
@@ -42,11 +53,19 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
-// Vision UI Dashboard React routes
+// Vision UI Dashboard React routes screen
 import routes from "routes";
+import Dashboard from "../src/layouts/dashboard/index";
+import SignIn from "./layouts/authentication/sign-in/index"
+import SignUp from "./layouts/authentication/sign-up/index"
+import JadwalUjikom from "layouts/pesertaUjikom/jadwalUjikom";
+import isiDataDiriPeserta from "layouts/pesertaUjikom/isiDataDiriPeserta"
+import isiAPL01 from "layouts/pesertaUjikom/isiAPL01";
+
 
 // Vision UI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
+
 
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
@@ -54,6 +73,12 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+
+  // set untuk cek login
+  const [authLogin, setAuthLogin] = useState(false);
+  const loginFunction = () => {
+    setAuthLogin(true);
+  };
 
   // Cache for the rtl
   useMemo(() => {
@@ -95,18 +120,18 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  const getRoutes = (allRoutes) =>
-    allRoutes.map((route) => {
-      if (route.collapse) {
-        return getRoutes(route.collapse);
-      }
+  // const getRoutes = (allRoutes) =>
+  //   allRoutes.map((route) => {
+  //     if (route.collapse) {
+  //       return getRoutes(route.collapse);
+  //     }
 
-      if (route.route) {
-        return <Route exact path={route.route} component={route.component} key={route.key} />;
-      }
+  //     if (route.route) {
+  //       return <Route exact path={route.route} component={route.component} key={route.key} />;
+  //     }
 
-      return null;
-    });
+  //     return null;
+  //   });
 
   const configsButton = (
     <VuiBox
@@ -131,41 +156,15 @@ export default function App() {
       </Icon>
     </VuiBox>
   );
-
-  return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand=""
-              brandName="VISION UI FREE"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Switch>
-          {getRoutes(routes)}
-          <Redirect from="*" to="/dashboard" />
-        </Switch>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {layout === "dashboard" && (
+      {/* {layout === "dashboard" && (
         <>
           <Sidenav
             color={sidenavColor}
             brand=""
-            brandName="VISION UI FREE"
+            brandName="LSP UPN VJ"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
@@ -173,12 +172,93 @@ export default function App() {
           <Configurator />
           {configsButton}
         </>
-      )}
-      {layout === "vr" && <Configurator />}
-      <Switch>
-        {getRoutes(routes)}
-        <Redirect from="*" to="/dashboard" />
-      </Switch>
+      )} */}
+      {/* {layout === "vr" && <Configurator />} */}
+      <Router>
+        <Provider store={store}>
+          <Switch>
+            {/* {getRoutes(routes)} */}
+            <Route path="/sign-up" component={SignUp} />
+            <LoginProtectedRoute exact path="/" authLogin={authLogin}>
+              <SignIn loginFunction={loginFunction} />
+            </LoginProtectedRoute>
+
+
+            <ProtectedRoute
+              path="/dashboard"
+              authLogin={authLogin}
+              component={Dashboard}
+            />
+
+            {/* peserta */}
+            <ProtectedRoute
+              path="/jadwal-ujikom"
+              authLogin={authLogin}
+              component={JadwalUjikom}
+            />
+            <ProtectedRoute
+              path="/isi-data-diri"
+              authLogin={authLogin}
+              component={isiDataDiriPeserta}
+            />
+            <ProtectedRoute
+              path="/isi-APL-01"
+              authLogin={authLogin}
+              component={isiAPL01}
+            />
+          </Switch>
+        </Provider>
+      </Router>
     </ThemeProvider>
-  );
+  )
+
+  // return direction === "rtl" ? (
+  //   <CacheProvider value={rtlCache}>
+  //     <ThemeProvider theme={themeRTL}>
+  //       <CssBaseline />
+  //       {layout === "dashboard" && (
+  //         <>
+  //           <Sidenav
+  //             color={sidenavColor}
+  //             brand=""
+  //             brandName="VISION UI FREE"
+  //             routes={routes}
+  //             onMouseEnter={handleOnMouseEnter}
+  //             onMouseLeave={handleOnMouseLeave}
+  //           />
+  //           <Configurator />
+  //           {configsButton}
+  //         </>
+  //       )}
+  //       {layout === "vr" && <Configurator />}
+  //       <Switch>
+  //         {getRoutes(routes)}
+  //         <Redirect from="*" to="/dashboard" />
+  //       </Switch>
+  //     </ThemeProvider>
+  //   </CacheProvider>
+  // ) : (
+  //   <ThemeProvider theme={theme}>
+  //     <CssBaseline />
+  //     {layout === "dashboard" && (
+  //       <>
+  //         <Sidenav
+  //           color={sidenavColor}
+  //           brand=""
+  //           brandName="VISION UI FREE"
+  //           routes={routes}
+  //           onMouseEnter={handleOnMouseEnter}
+  //           onMouseLeave={handleOnMouseLeave}
+  //         />
+  //         <Configurator />
+  //         {configsButton}
+  //       </>
+  //     )}
+  //     {layout === "vr" && <Configurator />}
+  //     <Switch>
+  //       {getRoutes(routes)}
+  //       <Redirect from="*" to="/dashboard" />
+  //     </Switch>
+  //   </ThemeProvider>
+  // );
 }

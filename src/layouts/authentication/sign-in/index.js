@@ -16,10 +16,14 @@
 
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLogin, resetRegister } from "../../../store/action/userAction";
+
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 
 // Vision UI Dashboard React components
 import VuiBox from "components/VuiBox";
@@ -39,26 +43,70 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
 import bgSignIn from "assets/images/signInImage.png";
+import pictureSignIn from "assets/images/signIn.jpg"
 
-function SignIn() {
+function SignIn(props) {
+
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+
+  useEffect (()=> {
+    dispatch(resetRegister ())
+  },[])
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      history.push("/dashboard");
+    }
+  }, [history, localStorage.getItem("access_token")]);
+  
   const [rememberMe, setRememberMe] = useState(true);
-
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const user = useSelector((state) => state.userReducers.userLogin);
+  const { loginFunction } = props;
 
+  const [formInput, setFormInput] = useState({
+    userName: "",
+    password: "",
+  });
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(fetchLogin(formInput));
+    loginFunction();
+  };
+  const userNameInput = (input) => {
+    const userName = formInput.userName;
+    setFormInput({ ...formInput, userName: input.target.value });
+  };
+
+  const passwordInput = (input) => {
+    const password = formInput.password;
+    setFormInput({ ...formInput, password: input.target.value });
+  };
+
+  const registerUser = () => {
+    history.push("/authentication/sign-up")
+  }
+
+   // Use effect to watch access token and push to dashboard
+   
+   
   return (
     <CoverLayout
-      title="Nice to see you!"
+      title="Hallo Insan Inovasi !"
       color="white"
-      description="Enter your email and password to sign in"
-      premotto="INSPIRED BY THE FUTURE:"
-      motto="THE VISION UI DASHBOARD"
-      image={bgSignIn}
+      description="Silahkan Masuk dengan email dan password anda"
+      premotto="Lembaga Sertifikasi Profesi UPN Veteran Jakarta"
+      motto="Bela Negara"
+      image={pictureSignIn}
     >
-      <VuiBox component="form" role="form">
+      <VuiBox component="form" role="form" onSubmit={onSubmit}>
         <VuiBox mb={2}>
           <VuiBox mb={1} ml={0.5}>
             <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
-              Email
+              User Name
             </VuiTypography>
           </VuiBox>
           <GradientBorder
@@ -71,12 +119,12 @@ function SignIn() {
               palette.gradients.borderLight.angle
             )}
           >
-            <VuiInput type="email" placeholder="Your email..." fontWeight="500" />
+            <VuiInput type="input" placeholder="Your username..." fontWeight="500" onChange={userNameInput} />
           </GradientBorder>
         </VuiBox>
         <VuiBox mb={2}>
           <VuiBox mb={1} ml={0.5}>
-            <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+            <VuiTypography component="label" variant="button" color="white" fontWeight="medium" >
               Password
             </VuiTypography>
           </VuiBox>
@@ -96,6 +144,7 @@ function SignIn() {
               sx={({ typography: { size } }) => ({
                 fontSize: size.sm,
               })}
+              onChange={passwordInput}
             />
           </GradientBorder>
         </VuiBox>
@@ -112,7 +161,7 @@ function SignIn() {
           </VuiTypography>
         </VuiBox>
         <VuiBox mt={4} mb={1}>
-          <VuiButton color="info" fullWidth>
+          <VuiButton color="info" fullWidth type="submit">
             SIGN IN
           </VuiButton>
         </VuiBox>
@@ -121,7 +170,7 @@ function SignIn() {
             Don&apos;t have an account?{" "}
             <VuiTypography
               component={Link}
-              to="/authentication/sign-up"
+              to="/sign-up"
               variant="button"
               color="white"
               fontWeight="medium"
@@ -129,6 +178,7 @@ function SignIn() {
               Sign up
             </VuiTypography>
           </VuiTypography>
+          
         </VuiBox>
       </VuiBox>
     </CoverLayout>
@@ -136,3 +186,5 @@ function SignIn() {
 }
 
 export default SignIn;
+
+

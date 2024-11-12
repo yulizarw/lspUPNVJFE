@@ -87,6 +87,7 @@ function CoverLayout({
           height="100%"
           sx={{
             backgroundImage: `url(${image})`,
+          
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
