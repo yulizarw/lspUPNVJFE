@@ -1,4 +1,4 @@
-import React, { Component, useEffect }  from "react";
+import React, { Component, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useHistory, Link, Redirect } from "react-router-dom";
 import { Card, Icon } from "@mui/material";
@@ -7,16 +7,48 @@ import VuiTypography from "components/VuiTypography";
 import gif from "../../../../assets/images/signUppic.jpg"
 
 import { position } from "stylis";
+//loader
+import Lottie from "react-lottie";
+import * as loaderData from "../../../../assets/loader/lottieLego.json"
 
-
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import Grid from "@mui/material/Grid";
 
 const WelcomeAsesor = (props) => {
-  
+  const { userLogin, lengkapiDataDiriAsesor, lihatJadwalKompetensiAsesor } = props
+  const dataAsesor = useSelector((state) => state.userReducers.asesorData) 
 
-  const { userLogin, lengkapiDataDiriAsesor, lihatJadwalKompetensi, dataAsesor} = props
+  // mengubah nama variabel karena data backend diganti biar ada jadwal di include dalam data
+  // const dataAsesor = dataAsesor1.Asesor
+
+
+ 
+  // lotie loader
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: loaderData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+
+
+  // if (!dataAsesor?.Asesor.SkemaUjikom?.namaSkema && !localStorage.getItem("namaSkema")) {
+  //   return (
+  //     <DashboardLayout>
+  //       <Grid>
+  //         <VuiBox>
+  //           <Lottie options={defaultOptions} />
+  //         </VuiBox>
+  //       </Grid>
+  //     </DashboardLayout>
+  //   );
+  // }
   return (
     <Card sx={() => ({
-      height: "340px",
+      height: "100%",
       py: "32px",
       // backgroundImage: `url(${userLogin.photo})`,
       // backgroundSize: "20%",
@@ -32,7 +64,8 @@ const WelcomeAsesor = (props) => {
       <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between" >
 
         <>
-          { dataAsesor !== null ? (
+       
+          {dataAsesor !== null ? (
             <>
               <VuiBox
                 display="flex"
@@ -59,18 +92,55 @@ const WelcomeAsesor = (props) => {
                 )
                 }
                 <VuiTypography color="white" variant="h3" fontWeight="bold" mb="18px">
-                  {dataAsesor.namaAsesor}
+                  {dataAsesor.Asesor.namaAsesor}
                 </VuiTypography>
 
                 <VuiTypography color="text" variant="h6" fontWeight="regular" mb="auto">
                   Anda telah terdaftar sebagai Asesor Skema Uji Kompetensi :
-                  <br />{dataAsesor.SkemaUjikom.namaSkema}
+                  {/* <br />{dataAsesor.SkemaUjikom.namaSkema || localStorage.getItem('namaSkema')} */}
+                  {dataAsesor?.Asesor?.SkemaUjikom?.namaSkema ? (
+                    <div>{dataAsesor.Asesor.SkemaUjikom.namaSkema}</div>
+                  ) : (
+                    <div>Loading...</div>
+                  )}
                 </VuiTypography>
               </VuiBox>
-              <Link to= "/jadwal-ujikom">
+
+  
+              {dataAsesor?.Asesor?.jadwalSkemaUjikomId !== null ? (
+              
+                  <VuiTypography
+                    component="a"
+                    onClick={lihatJadwalKompetensiAsesor}
+                    // href="/jadwal-ujikom"
+                    variant="button"
+                    color="white"
+                    fontWeight="regular"
+                    sx={{
+                      mr: "5px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+
+                      "& .material-icons-round": {
+                        fontSize: "1.125rem",
+                        transform: `translate(2px, -0.5px)`,
+                        transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
+                      },
+
+                      "&:hover .material-icons-round, &:focus  .material-icons-round": {
+                        transform: `translate(6px, -0.5px)`,
+                      },
+                    }}
+                  >
+                    Lihat Jadwal Pengujian Sertifikasi Kompetensi Anda
+                    <Icon sx={{ fontWeight: "bold", ml: "5px" }}>arrow_forward</Icon>
+                  </VuiTypography>
+        
+              ) : (
                 <VuiTypography
                   component="a"
-                  onClick={lihatJadwalKompetensi}
+                  // onClick={lihatJadwalKompetensi}
                   // href="/jadwal-ujikom"
                   variant="button"
                   color="white"
@@ -92,10 +162,11 @@ const WelcomeAsesor = (props) => {
                     },
                   }}
                 >
-                  Lihat Jadwal Pengujian Sertifikasi Kompetensi Anda
+                  Anda Belum dijadwalkan untuk melakukan Pengujian Kompetensi
                   <Icon sx={{ fontWeight: "bold", ml: "5px" }}>arrow_forward</Icon>
                 </VuiTypography>
-              </Link>
+              )}
+
             </>
           ) : (
             <>

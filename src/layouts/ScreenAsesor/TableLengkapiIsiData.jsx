@@ -281,7 +281,6 @@ function TableLengkapiDataDiri(props) {
                 Pilih Skema Anda
               </MenuItem>
               {allJadwal.findAllJadwal.map((jadwal) => (
-
                 <MenuItem key={jadwal.namaSkema} onClick={() => handleSelect(jadwal.namaSkema)} >
                   {jadwal.namaSkema}
                 </MenuItem>

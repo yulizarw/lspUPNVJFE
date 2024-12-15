@@ -1,5 +1,5 @@
 
-
+import Cookies from "js-cookie";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
@@ -29,11 +29,13 @@ import WelcomePeserta from "layouts/dashboard/components/WelcomePeserta";
 import WelcomeAsesor from "layouts/dashboard/components/WelcomeAsesor"
 import SkemaUjikom from "layouts/dashboard/components/SkemaUjikom";
 import ChecklistPeserta from "layouts/dashboard/components/CheklistPeserta";
+import ChecklistAsesor from "layouts/ScreenAsesor/ChecklistAsesor";
 import SatisfactionRate from "layouts/dashboard/components/SatisfactionRate";
 import ReferralTracking from "layouts/dashboard/components/ReferralTracking";
 import TableJadwalUjikom from "./components/TabelJadwalUjikomAll/tableJadwalSkemaUjikom";
 import JadwalUjikom from "layouts/pesertaUjikom/jadwalUjikom";
 import TableLengkapiDataDiriAsesor from "layouts/ScreenAsesor/TableLengkapiIsiData"
+import TableJadwalAsesor from "layouts/ScreenAsesor/TableJadwalAsesor"
 // React icons
 import { IoIosRocket } from "react-icons/io";
 import { IoGlobe } from "react-icons/io5";
@@ -51,23 +53,24 @@ import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
 // store
-import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal, fetchDataDiriAsesor, logOut } from "../../store/action/userAction";
+import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal, fetchDataDiriAsesor, logOut, lihatJadwalKompetensiUser, fetchListAPL02Peserta  } from "../../store/action/userAction";
 
 
 //loader
 import Lottie from "react-lottie";
 import * as loaderData from "../../assets/loader/lottieLego.json"
 import TablePilihSkema from "./components/TabelJadwalUjikomAll/tablePilihSkema";
+import ReferralTrackingAsesor from "layouts/ScreenAsesor/ReferralTrackingAsesor";
 
 function Dashboard() {
   const dispatch = useDispatch();
   const history = useHistory();
   const userLogin = useSelector((state) => state.userReducers.userLogin);
-  const dataUser = useSelector((state) => state.userReducers.dataPribadi);
-  const jadwalPeserta = useSelector((state) => state.userReducers.jadwalPesertaUjikom);
+  const dataUser = useSelector((state) => state.userReducers.dataPribadi) || {};
+  const jadwalPeserta = useSelector((state) => state.userReducers.jadwalPesertaUjikom) || {};
   const jadwalPesertaError = useSelector((state) => state.userReducers.jadwalPesertaError);
   const loadingJadwal = useSelector((state) => state.userReducers.loadingJadwalFetch);
-  const allJadwal = useSelector((state) => state.userReducers.allJadwal)
+  const allJadwal = useSelector((state) => state.userReducers.allJadwal) || {}
   const allJadwalError = useSelector((state) => state.userReducers.allJadwalError)
   const loadAllJadwal = useSelector((state) => state.userReducers.loadingJadwalFetch)
   const statusPilihSkemaPeserta = useSelector((state) => state.userReducers.statusPilihSkemaPeserta)
@@ -76,11 +79,20 @@ function Dashboard() {
   const dataAsesorError = useSelector((state) => state.userReducers.asesorDataError)
   const loadDataAsesor = useSelector((state) => state.userReducers.loadDataAsesor)
 
+  const jadwalUjiUser = useSelector((state) => state.userReducers.lihatJadwalUjiUser)
+
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [isToggled, setIsToggled] = useState(false);
+  const [isToggledJadwalAsesor, setIsToggledJadwalAsesor] = useState(false);
   const [pilihSkema, setPilihan] = useState(false)
   const [lengkapiDataAsesorToggle, setToggleAsesor] = useState(false)
 
+  // get data cookies
+  // const userLogin = JSON.parse(Cookies.get('userLogin'))
+
+ 
+  
+ 
   // lotie loader
   const defaultOptions = {
     loop: true,
@@ -100,10 +112,14 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchDataPribadi(userLogin.access_token))
-    dispatch(fetchAllJadwal(userLogin.access_token))
-    dispatch(fetchJadwalUjikomPeserta(userLogin.access_token))
-    dispatch(fetchDataDiriAsesor(userLogin.access_token))
+    if (userLogin?.access_token) {
+      dispatch(fetchDataPribadi(userLogin.access_token));
+      dispatch(fetchAllJadwal(userLogin.access_token));
+      dispatch(fetchJadwalUjikomPeserta(userLogin.access_token));
+      dispatch(fetchDataDiriAsesor(userLogin.access_token));
+      dispatch(lihatJadwalKompetensiUser(userLogin.access_token))
+      dispatch(fetchListAPL02Peserta({access_token: userLogin.access_token}))
+    }
   }, [userLogin])
 
   useEffect(() => {
@@ -120,9 +136,15 @@ function Dashboard() {
     setIsToggled((prevState) => !prevState)
   }
 
+
+  const lihatJadwalKompetensiAsesor = () => {
+    console.log(dataAsesor)
+    setIsToggledJadwalAsesor((prevstate) => !prevstate)
+  }
+
   const lengkapiDataDiriAsesor = () => {
     setToggleAsesor((prevState) => !prevState)
-    // console.log(lengkapiDataAsesorToggle,'togle asesordiri')
+
   }
 
   const isiDataDiriPeserta = () => {
@@ -135,7 +157,8 @@ function Dashboard() {
     dispatch(logOut());
     history.push("/");
   };
-  if (loadingJadwal) {
+
+  if (loading || loadingJadwal || loadAllJadwal || loadDataAsesor) {
     return (
       <DashboardLayout>
         <Grid>
@@ -143,45 +166,6 @@ function Dashboard() {
             <Lottie options={defaultOptions} />
           </VuiBox>
         </Grid>
-
-      </DashboardLayout>
-    );
-  }
-  if (loadAllJadwal) {
-    return (
-      <DashboardLayout>
-        <Grid>
-          <VuiBox>
-            <Lottie options={defaultOptions} />
-          </VuiBox>
-        </Grid>
-
-      </DashboardLayout>
-    );
-  }
-
-  if (loading) {
-    return (
-      <DashboardLayout>
-        <Grid>
-          <VuiBox>
-            <Lottie options={defaultOptions} />
-          </VuiBox>
-        </Grid>
-
-      </DashboardLayout>
-    );
-  }
-
-  if (loadDataAsesor) {
-    return (
-      <DashboardLayout>
-        <Grid>
-          <VuiBox>
-            <Lottie options={defaultOptions} />
-          </VuiBox>
-        </Grid>
-
       </DashboardLayout>
     );
   }
@@ -191,6 +175,10 @@ function Dashboard() {
 
   const onClickChecklistPesertaAPL01 = () => {
     history.push('/isi-apl-01')
+  }
+
+  const onClickChecklistPesertaAPL02 = () => {
+    history.push('/pengisian-apl02')
   }
 
   return (
@@ -206,53 +194,34 @@ function Dashboard() {
                   <WelcomePeserta userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} isiDataDiriPeserta={isiDataDiriPeserta} pilihSkemaKompetensi={pilihSkemaKompetensi} />
                 ) :
 
-                (<WelcomeAsesor userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} dataAsesor={dataAsesor} lengkapiDataDiriAsesor={lengkapiDataDiriAsesor} />)
+                (<WelcomeAsesor userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensiAsesor={lihatJadwalKompetensiAsesor} dataAsesor={dataAsesor} lengkapiDataDiriAsesor={lengkapiDataDiriAsesor} />)
 
               }
 
             </Grid>
-            {/* <Grid item xs={12} lg={6} xl={3}>
-              <SatisfactionRate />
-            </Grid> */}
+            
             <Grid item xs={12} lg={8} xl={7}>
               {/* detil TUK */}
-              <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} />
+              {userLogin.role == "Peserta Ujikom" ? (
+                <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />
+              )
+              : userLogin.role == "Asesor" ? (<ReferralTrackingAsesor allJadwal={allJadwal} dataAsesor={dataAsesor} dataUser={dataUser} jadwalUjiUser={jadwalUjiUser} />) : 
+              ( <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />)
+            
+            }
+
             </Grid>
           </Grid>
         </VuiBox>
         <Grid mb={3} container spacing={3} direction="row" justifyContent="center" alignItems="stretch">
-          {/* <Grid item xs={12} md={6} lg={8}>
-           
-
-            {userLogin.role === 'Peserta Ujikom' ? (
-              isToggled === false ? (
-                <TableJadwalUjikom
-                  jadwalPeserta={jadwalPeserta}
-                  allJadwal={allJadwal}
-                  allJadwalError={allJadwalError}
-                  loadAllJadwal={loadAllJadwal}
-                />
-              ) : (
-                <JadwalUjikom />
-              )
-            ) : userLogin.role === 'Admin' ? (
-              <SkemaUjikom
-                jadwalPeserta={jadwalPeserta}
-                allJadwal={allJadwal}
-                allJadwalError={allJadwalError}
-                loadAllJadwal={loadAllJadwal}
-              />
-            ) : (<SkemaUjikom
-              jadwalPeserta={jadwalPeserta}
-              allJadwal={allJadwal}
-              allJadwalError={allJadwalError}
-              loadAllJadwal={loadAllJadwal}
-            />)}
-          </Grid> */}
+        
           <Grid item xs={12} md={6} lg={8}>
-            {pilihSkema == true ? (
-              <TablePilihSkema allJadwal={allJadwal} />
-            ) : userLogin.role === 'Peserta Ujikom' ? (
+            {userLogin?.role === 'Asesor' && dataAsesor == null ? (
+              <TableLengkapiDataDiriAsesor
+                allJadwal={allJadwal}
+                userLogin={userLogin}
+              />
+            ) : userLogin?.role === 'Peserta Ujikom' || userLogin.role === "Admin" ? (
               isToggled === false ? (
                 <TableJadwalUjikom
                   jadwalPeserta={jadwalPeserta}
@@ -263,47 +232,29 @@ function Dashboard() {
                 />
               ) : (
                 <JadwalUjikom />
+              
               )
-            ) : null
-            // : userLogin.role === 'Admin' ? (
-            //   <SkemaUjikom
-            //     jadwalPeserta={jadwalPeserta}
-            //     allJadwal={allJadwal}
-            //     allJadwalError={allJadwalError}
-            //     loadAllJadwal={loadAllJadwal}
-            //   />
-            // )
-            //  : (
-
-            //   <TableJadwalUjikom
-            //     jadwalPeserta={jadwalPeserta}
-            //     allJadwal={allJadwal}
-            //     allJadwalError={allJadwalError}
-            //     loadAllJadwal={loadAllJadwal}
-            //     dataUser={dataUser}
-            //   />
-            // )
-            }
-
-            { userLogin.role =='Asesor' && dataAsesor !== null ? (
+            ) : isToggledJadwalAsesor === false ? (
               <TableJadwalUjikom
-                jadwalPeserta={jadwalPeserta}
+                jadwalPeserta={dataAsesor}
                 allJadwal={allJadwal}
                 allJadwalError={allJadwalError}
                 loadAllJadwal={loadAllJadwal}
                 dataUser={dataUser}
+                dataAsesor={dataAsesor}
               />
-            )
-              : (
-                <TableLengkapiDataDiriAsesor allJadwal={allJadwal} userLogin = {userLogin} />
-              )}
+             
+            ) : (
+            <TableJadwalAsesor></TableJadwalAsesor>
+        
+            )}
           </Grid>
 
 
           <Grid item xs={12} md={6} lg={4}>
-            {userLogin.role === 'Peserta Ujikom' ?
-              (<ChecklistPeserta dataUser={dataUser} onClickChecklistPesertaAPL01={onClickChecklistPesertaAPL01} />) :
-              (<ChecklistPeserta />)
+            {userLogin.role === 'Peserta Ujikom' || userLogin.role === 'Admin' ?
+              (<ChecklistPeserta dataUser={dataUser} onClickChecklistPesertaAPL01={onClickChecklistPesertaAPL01} jadwalUjiUser={jadwalUjiUser} onClickChecklistPesertaAPL02={onClickChecklistPesertaAPL02} />) :
+              (<ChecklistAsesor dataAsesor={dataAsesor} jadwalUjiUser={jadwalUjiUser} />)
             }
 
           </Grid>

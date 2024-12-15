@@ -1,27 +1,11 @@
-/*!
 
-=========================================================
-* Vision UI Free React - v1.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/vision-ui-free-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com/)
-* Licensed under MIT (https://github.com/creativetimofficial/vision-ui-free-react/blob/master LICENSE.md)
-
-* Design and Coded by Simmmple & Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 
 import { useState, useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLogin, resetRegister } from "../../../store/action/userAction";
 
-
+import Cookies from "js-cookie";
 // react-router-dom components
 import { Link, Redirect, useHistory } from "react-router-dom";
 
@@ -59,6 +43,9 @@ function SignIn(props) {
     if (localStorage.getItem("access_token")) {
       history.push("/dashboard");
     }
+    // if(Cookies.get('access_token')){
+    //   history.push("/dashboard")
+    // }
   }, [history, localStorage.getItem("access_token")]);
   
   const [rememberMe, setRememberMe] = useState(true);

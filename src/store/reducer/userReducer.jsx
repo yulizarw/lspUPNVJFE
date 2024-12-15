@@ -1,5 +1,8 @@
+import { listAPL02Asesor } from "store/action/userAction"
+import { lihatJadwalKompetensiUser } from "store/action/userAction"
+
 const initialState = {
-  userLogin: {},
+  userLogin: JSON.parse(localStorage.getItem("userLogin")) || null,
 
   registerStatus: false,
   registerError: null,
@@ -32,15 +35,29 @@ const initialState = {
   statusGagalPilihSKemaPeserta: "",
 
   // get data asesor
-  asesorData:{},
-  asesorDataError:"",
-  loadDataAsesor:true,
+  asesorData: {},
+  asesorDataError: "",
+  loadDataAsesor: true,
 
-  addDataAsesor:{},
-  addDataAsesorError:"",
+  addDataAsesor: {},
+  addDataAsesorError: "",
 
-  statusPilihSkemaAsesor:{},
-  errorPilihSkemaAsesor:"",
+  statusPilihSkemaAsesor: {},
+  errorPilihSkemaAsesor: "",
+
+  lihatJadwalUjiUser: {},
+  errorLihatJadwalUjiUser: "",
+
+  listAPL02Asesor: [],
+  errorListAPL02Asesor: "",
+
+  statusPostMUK: false,
+  errorPostMUK: "",
+
+  statusSimpanAPL01: "",
+  errorSimpanAPL01: "",
+
+  listAPL02Peserta:[],
 
 }
 
@@ -99,31 +116,71 @@ export const userReducers = (state = initialState, { type, payload }) => {
       return { ...state, statusGagalInput: payload }
 
     case "SUCCESS_PILIH_SKEMA":
-      return { ...state, statusPilihSkemaPeserta:true}
-    
-    case "ERROR_PILIH_SKEMA" :
-      return {...state, statusGagalPilihSKemaPeserta:payload}
-    
-    case "SUCCESS_FETCH_DATA_ASESOR" :
-      return {...state, asesorData:payload}
+      return { ...state, statusPilihSkemaPeserta: true }
 
-    case "ERROR_FETCH_DATA_ASESOR" :
-      return {...state, asesorDataError:payload}
-    
-    case "LOAD_DATA_ASESOR" :
-      return {...state, loadDataAsesor:false}
-    
+    case "ERROR_PILIH_SKEMA":
+      return { ...state, statusGagalPilihSKemaPeserta: payload }
+
+    case "SUCCESS_FETCH_DATA_ASESOR":
+      return { ...state, asesorData: payload }
+
+    case "ERROR_FETCH_DATA_ASESOR":
+      return { ...state, asesorDataError: payload }
+
+    case "LOAD_DATA_ASESOR":
+      return { ...state, loadDataAsesor: false }
+
     case "SUCCESS_TAMBAH_DATA_DIRI":
-      return {...state, addDataAsesor:payload}
-    
+      return { ...state, addDataAsesor: payload }
+
     case "ERROR_TAMBAH_DATA_DIRI":
-      return {...state, addDataAsesorError:payload}
-    
+      return { ...state, addDataAsesorError: payload }
+
     case "SUCCESS_PILIH_SKEMA_ASESOR":
-      return {...state,statusPilihSkemaAsesor:payload}
-    
+      return { ...state, statusPilihSkemaAsesor: payload }
+
     case "ERROR_PILIH_SKEMA_ASESOR":
-      return {...state,errorPilihSkemaAsesor:payload}
+      return { ...state, errorPilihSkemaAsesor: payload }
+
+    case "SUCCESS_LIHAT_JADWAL_USER":
+      return { ...state, lihatJadwalUjiUser: payload }
+
+    case "ERROR_LIHAT_JADWAL_USER":
+      return { ...state, errorLihatJadwalUjiUser: payload }
+
+    case "SUCCESS_LIST_APL_02":
+      return { ...state, listAPL02Asesor: payload }
+
+    case "ERROR_LIST_APL_02":
+      return { ...state, errorListAPL02Asesor: payload }
+
+    case "SUCCESS_UPDATE_MUK":
+      return { ...state, statusPostMUK: payload }
+
+    case "ERROR_UPDATE_MUK":
+      return { ...state, errorPostMUK: payload }
+
+    case "SUCCESS_UPDATE_MUK":
+      return { ...state, statusPostMUK: payload }
+
+    case "ERROR_UPDATE_MUK":
+      return { ...state, errorPostMUK: payload }
+
+    case "FINISH_UPDATE":
+      return { ...state, statusPostMUK: false }
+
+    case "SUCCESS_POST_MUK":
+      return { ...state, statusPostMUK: payload }
+
+    case "SUCCESS_SIMPAN_APL01":
+      return {...state, statusSimpanAPL01:payload}
+
+    case "ERROR_SIMPAN_APL01":
+      return {...state, errorSimpanAPL01:payload}
+    
+    case "SUCCESS_GET_LIST_APL02":
+      return {...state,listAPL02Peserta:payload}
+    
     default:
       return state
   }

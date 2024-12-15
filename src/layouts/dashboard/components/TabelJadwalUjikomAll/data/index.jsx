@@ -46,7 +46,7 @@ export default function data() {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  console.log(allJadwal,'di data tabel')
+ 
   if (loadAllJadwal) {
     return (
       <DashboardLayout>

@@ -8,30 +8,52 @@ import linearGradient from 'assets/theme/functions/linearGradient';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
+import 'leaflet/dist/leaflet.css'
+import logoUPN from "../../assets/images/LOGO UPNVJ.svg"
 
-function ReferralTracking(props) {
+function ReferralTrackingAsesor(props) {
 	const { info, gradients } = colors;
 	const { cardContent } = gradients;
-	const { allJadwal, jadwalPeserta, dataUser } = props
-	// const position = [allJadwal.findAllJadwal[0].Tuk.lat, allJadwal.findAllJadwal[0].Tuk.long]
+	const { allJadwal, dataAsesor, dataUser, jadwalUjiUser } = props
 
-	// Fallback if `allJadwal.findAllJadwal` is empty or missing
-	const position =
-		allJadwal?.findAllJadwal?.length > 0
-			? [allJadwal.findAllJadwal[0].Tuk.lat, allJadwal.findAllJadwal[0].Tuk.long]
-			: [0, 0]; // Default position in case the data is missing
 
 	const defaultDataUser = {
-    namaPeserta:"",
-    apl01: "",
-    apl02: "",
-    frAK01: "",
-    BuktiPortfolio: [],
-    updatedAt: new Date(),
-    ...dataUser, // jika dataUser ada, maka akan meng-override nilai default
-  };
+		namaPeserta: "",
+		apl01: "",
+		apl02: "",
+		frAK01: "",
+		BuktiPortfolio: [],
+		updatedAt: new Date(),
+		...dataUser, // jika dataUser ada, maka akan meng-override nilai default
+	};
+
+
+	// mencari nama dan lokasi tuk
+
+
+	// const matchingJadwal = allJadwal?.findAllJadwal?.find((jadwal) =>
+	// 	jadwal.id === dataAsesor?.Asesor?.skemaUjikomId &&
+	// 	jadwal?.JadwalUjikoms.some((jadwalUjikom) => jadwalUjikom.id === dataAsesor?.filterJadwal.id)
+	// );
+	const matchingJadwal = allJadwal?.findAllJadwal?.find((jadwal) => {
+    if (
+        jadwal?.id === dataAsesor?.Asesor?.skemaUjikomId &&
+        Array.isArray(jadwal?.JadwalUjikoms)
+    ) {
+        return jadwal.JadwalUjikoms.some(
+            (jadwalUjikom) => jadwalUjikom?.id === dataAsesor?.filterJadwal?.id
+        );
+    }
+    return false;
+});
+
+
+	// Ambil data TUK jika ada
+	const tukDetails = matchingJadwal?.Tuk || null;
+	const position = tukDetails ? [parseFloat(tukDetails.lat), parseFloat(tukDetails.long)] : [0, 0];
+
 
 	return (
 		<Card
@@ -40,7 +62,7 @@ function ReferralTracking(props) {
 				background: linearGradient(gradients.cardDark.main, gradients.cardDark.state, gradients.cardDark.deg)
 			}}>
 
-			{allJadwal?.findAllJadwal?.length > 0 && defaultDataUser.namaPeserta.length > 0 && jadwalPeserta?.namaSkema && jadwalPeserta?.PesertaUjikoms[0].jadwalUjikomId ?
+			{tukDetails ?
 				(<VuiBox sx={{ width: '100%' }}>
 					<VuiBox
 						display='flex'
@@ -110,7 +132,7 @@ function ReferralTracking(props) {
 									Alamat
 								</VuiTypography>
 								<VuiTypography color='white' variant='button' fontWeight='regular'>
-									{allJadwal.findAllJadwal[0].Tuk.lokasiTUK}
+									{tukDetails.lokasiTUK}
 								</VuiTypography>
 							</VuiBox>
 							<VuiBox
@@ -133,7 +155,7 @@ function ReferralTracking(props) {
 									Ruang
 								</VuiTypography>
 								<VuiTypography color='white' variant='button' fontWeight='regular'>
-									{allJadwal.findAllJadwal[0].Tuk.namaTUK}
+									{tukDetails.namaTUK}
 								</VuiTypography>
 							</VuiBox>
 						</Stack>
@@ -143,56 +165,17 @@ function ReferralTracking(props) {
 								<TileLayer
 									attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 									url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+								// url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+
 								/>
 								<Marker position={position}>
 									<Popup>
-										Lokasi: {allJadwal.findAllJadwal[0].Tuk.namaTUK} <br />
-										Alamat: {allJadwal.findAllJadwal[0].Tuk.lokasiTUK}
+										Lokasi: {tukDetails.namaTUK} <br />
+										Alamat: {tukDetails.lokasiTUK}
 									</Popup>
 								</Marker>
 							</MapContainer>
 						</VuiBox>
-
-						{/* <VuiBox sx={{ position: 'relative', display: 'inline-flex' }}>
-						<CircularProgress
-							variant='determinate'
-							value={70}
-							size={window.innerWidth >= 1024 ? 200 : window.innerWidth >= 768 ? 170 : 200}
-							color='success'
-						/>
-						<VuiBox
-							sx={{
-								top: 0,
-								left: 0,
-								bottom: 0,
-								right: 0,
-								position: 'absolute',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center'
-							}}>
-							<VuiBox display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
-								<VuiTypography color='text' variant='button' mb='4px'>
-									Safety
-								</VuiTypography>
-								<VuiTypography
-									color='white'
-									variant='d5'
-									fontWeight='bold'
-									mb='4px'
-									sx={({ breakpoints }) => ({
-										[breakpoints.only('xl')]: {
-											fontSize: '32px'
-										}
-									})}>
-									9.3
-								</VuiTypography>
-								<VuiTypography color='text' variant='button'>
-									Total Score
-								</VuiTypography>
-							</VuiBox>
-						</VuiBox>
-					</VuiBox> */}
 					</VuiBox>
 				</VuiBox>)
 				: (<VuiBox sx={{ width: '100%' }}>
@@ -292,11 +275,13 @@ function ReferralTracking(props) {
 							</VuiBox>
 						</Stack>
 
+
 						<VuiBox sx={{ width: '100%', height: '200px' }}>
 							<MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }} scrollWheelZoom={false}>
 								<TileLayer
 									attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-									url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+									// url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+									url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
 								/>
 								<Marker position={position}>
 									<Popup>
@@ -308,6 +293,7 @@ function ReferralTracking(props) {
 						</VuiBox>
 
 
+
 					</VuiBox>
 				</VuiBox>)}
 
@@ -315,4 +301,4 @@ function ReferralTracking(props) {
 	);
 }
 
-export default ReferralTracking;
+export default ReferralTrackingAsesor;

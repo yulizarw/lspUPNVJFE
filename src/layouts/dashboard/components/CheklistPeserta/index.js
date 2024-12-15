@@ -26,7 +26,7 @@ import { Padding } from "@mui/icons-material";
 
 function ChecklistPeserta(props) {
 
-  const { dataUser, onClickChecklistPesertaAPL01 } = props
+  const { dataUser, onClickChecklistPesertaAPL01, onClickChecklistPesertaAPL02 } = props
 
   const defaultDataUser = {
     namaPeserta: "",
@@ -192,14 +192,15 @@ function ChecklistPeserta(props) {
             dateTime={new Date(defaultDataUser.updatedAt).toLocaleDateString()}
           />
         ) : (
-          <>
+          <div onClick={onClickChecklistPesertaAPL02}  sx={{cursor:"pointer"}} variant="button" >
             <TimelineItem
               icon={<BsXCircleFill size="16px" color="red" />}
               title="Anda Belum Mengisi Formulir APL 02"
               dateTime="Lengkapi Data APL 02 Anda Disini"
+
             />
             
-          </>
+          </div>
         )
         }
         {
