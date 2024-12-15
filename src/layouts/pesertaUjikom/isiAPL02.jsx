@@ -90,7 +90,7 @@ function isiAPL02() {
   const statusErrorPostMUK = useSelector((state) => state.userReducers.errorPostMUK)
   const listAPL02Peserta = useSelector((state) => state.userReducers.listAPL02Peserta)
 
-  const dataPribadi = useSelector((state)=> state.userReducers.dataPribadi)
+  const dataPribadi = useSelector((state) => state.userReducers.dataPribadi)
   const [loading, setLoading] = useState(true); // State to manage loading status
 
   // lotie loader
@@ -103,8 +103,6 @@ function isiAPL02() {
     },
   };
 
-
-
   useEffect(() => {
     // Simulate fetching data and setting it to formData.dynamicFields
     setFormData((prevFormData) => ({
@@ -112,15 +110,6 @@ function isiAPL02() {
       dynamicFields: listAPL02Peserta, // Populate with mockData
     }));
   }, [listAPL02Peserta]);
-  // Show alert on error
-  useEffect(() => {
-    if (statusErrorPostMUK) {
-      setShowErrorAlert(true);
-      // Optionally hide the alert after a few seconds
-      const timer = setTimeout(() => setShowErrorAlert(false), 5000); // Hide after 5 seconds
-      return () => clearTimeout(timer); // Clean up the timer on unmount
-    }
-  }, [statusErrorPostMUK]);
 
 
   useEffect(() => {
@@ -135,7 +124,6 @@ function isiAPL02() {
   const [value, setValue] = React.useState('1');
   const { gradients } = colors;
   const { cardContent } = gradients;
-
 
   const backToHome = () => {
     history.push('/dashboard')
@@ -257,9 +245,9 @@ function isiAPL02() {
               Lembaga Sertifikasi Profesi UPN Veteran Jakarta
             </VuiTypography>
           </VuiBox>
-            <VuiTypography color="text" variant="button" fontWeight="bold" mb="5px">
-              FORM APL-02 : FORMULIR ASESMEN MANDIRI PESERTA
-            </VuiTypography>
+          <VuiTypography color="text" variant="button" fontWeight="bold" mb="5px">
+            FORM APL-02 : FORMULIR ASESMEN MANDIRI PESERTA
+          </VuiTypography>
           <form role="form" component="role" onSubmit={handleSubmit} >
             <VuiTypography color="text" variant="button" fontWeight="bold" mb="5px">
               Materi Uji Kompetensi : Skema Uji Kompetensi {dataPribadi.SkemaUjikom.namaSkema}
@@ -310,7 +298,7 @@ function isiAPL02() {
                 )
                   : (formData.dynamicFields.map((field, index) => {
                     // Cek apakah unitKompetensiId sudah ada di database
-                   
+
 
                     return (
                       <div key={index} style={{ marginBottom: "10px", border: "1px solid #ccc", padding: "10px" }}>
@@ -355,12 +343,34 @@ function isiAPL02() {
                             disabled
                           />
                         </div>
+                        <div>
+                          <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+                            Kompetensi:
+                          </VuiTypography>
+                          <select
+                            style={{
+                              width: "100%",
+                              padding: "8px",
+                              borderRadius: "4px",
+                              border: "1px solid #ccc",
+                            }}
+                            value={field.fieldValue || ""}
+                            onChange={(e) => handleDynamicFieldChange(index, "fieldValue", e.target.value)}
+                          >
+                            <option value="">Pilih Status</option>
+                            <option value="Kompeten">Kompeten</option>
+                            <option value="Tidak Kompeten">Tidak Kompeten</option>
+                          </select>
+                        </div>
                       </div>
+
+
                     )
                   }))}
 
-                
+
               </VuiBox>
+
 
               {/* Submit Button */}
               <VuiBox mt={2} mb={1}>
