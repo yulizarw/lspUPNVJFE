@@ -26,7 +26,7 @@ import { Padding } from "@mui/icons-material";
 
 function ChecklistPeserta(props) {
 
-  const { dataUser, onClickChecklistPesertaAPL01, onClickChecklistPesertaAPL02 } = props
+  const { dataUser, onClickChecklistPesertaAPL01, onClickChecklistPesertaAPL02, onClickChecklistPortfolio } = props
 
   const defaultDataUser = {
     namaPeserta: "",
@@ -184,7 +184,6 @@ function ChecklistPeserta(props) {
           </div >
 
         )}
-
         {defaultDataUser.apl02 === "Sudah Terisi" ? (
           <TimelineItem
             icon={<BsCheckCircleFill size="16px" color="green" />}
@@ -197,13 +196,14 @@ function ChecklistPeserta(props) {
               icon={<BsXCircleFill size="16px" color="red" />}
               title="Anda Belum Mengisi Formulir APL 02"
               dateTime="Lengkapi Data APL 02 Anda Disini"
+              sx={{cursor:'pointer'}}
 
             />
             
           </div>
         )
         }
-        {
+        {/* {
           defaultDataUser.frAK01 === "Sudah Terisi" ? (
             <TimelineItem
               icon={<BsCheckCircleFill size="16px" color="green" />}
@@ -217,18 +217,19 @@ function ChecklistPeserta(props) {
               dateTime="Lengkapi Data FRAK01 Anda Disini"
             />
           )
-        }
+        } */}
         {
           Object.values(defaultDataUser.BuktiPortfolio || {}).length === 0 ? (
-            <>
+            <div onClick={onClickChecklistPortfolio}  sx={{cursor:"pointer"}} variant="button"  >
             
               <TimelineItem
                 icon={<BsXCircleFill size="16px" color="red" />}
                 title="Anda Belum Mengisi Bukti Portofolio"
                 dateTime="Lengkapi data Portfolio Anda Disini"
+                sx={{cursor:'pointer'}}
               />
             
-            </>
+            </div>
           ) : (
             <TimelineItem
               icon={<BsCheckCircleFill size="16px" color="green" />}

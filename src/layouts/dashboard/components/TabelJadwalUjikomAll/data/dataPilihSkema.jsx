@@ -20,6 +20,7 @@ export default function data() {
   const handleSelectJadwal = (jadwal) => {
     const access_token = userLogin.access_token;
     dispatch(pilihSkemaUjikom({ access_token, jadwal }));
+     history.push('/')
   };
 
   // Lottie loader config
@@ -84,11 +85,27 @@ export default function data() {
           Aksi: (
             <VuiBox width="8rem" textAlign="center">
               <VuiTypography
-                color="white"
-                variant="button"
-                fontWeight="bold"
-                sx={{ cursor: "pointer" }}
                 onClick={() => handleSelectJadwal(jadwal)}
+                component="a"
+                variant="button"
+                color="white"
+                fontWeight="bold"
+                sx={{
+                  mr: "5px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+
+                  "& .material-icons-round": {
+                    fontSize: "1.125rem",
+                    transform: `translate(2px, -0.5px)`,
+                    transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
+                  },
+
+                  "&:hover .material-icons-round, &:focus  .material-icons-round": {
+                    transform: `translate(6px, -0.5px)`,
+                  },
+                }}
               >
                 Pilih
               </VuiTypography>

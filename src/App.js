@@ -25,7 +25,7 @@
 
 
 // // Vision UI Dashboard React example components
-// import Sidenav from "examples/Sidenav";
+import Sidenav from "examples/Sidenav";
 // import Configurator from "examples/Configurator";
 
 // // Vision UI Dashboard React themes
@@ -262,6 +262,12 @@ import isiDataDiriPeserta from "layouts/pesertaUjikom/isiDataDiriPeserta";
 import isiAPL01 from "layouts/pesertaUjikom/isiAPL01";
 import IsiKUK from "layouts/ScreenAsesor/IsiKUK";
 import isiAPL02 from "layouts/pesertaUjikom/isiAPL02";
+import isiPortfolio from "layouts/pesertaUjikom/isiPortfolio";
+import DashboardAdmin from "layouts/screenAdmin/DashboardAdmin";
+
+
+import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { jwtDecode } from "jwt-decode";
 
 // Vision UI Dashboard React components
 import { ThemeProvider } from "@mui/material/styles";
@@ -271,14 +277,16 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "assets/theme";
 import "leaflet/dist/leaflet.css";
 // Route guard hooks
-import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
 
 import Cookies from "js-cookie";
+
+
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
-  const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const { pathname } = useLocation();
+
   const [authLogin, setAuthLogin] = useState(false);
+  // const [userRole, setUserRole] = useState(null); // State untuk menyimpan role user
 
   // Cek jika ada access_token di localStorage saat pertama kali load aplikasi
   useEffect(() => {
@@ -288,24 +296,22 @@ export default function App() {
       setAuthLogin(!!token); // Jika token ada, berarti sudah login
     }
   }, []);
-
-  // // Fungsi login
-  // const loginFunction = () => {
-  //   localStorage.setItem("access_token", "token"); // Simpan token setelah login
-  //   setAuthLogin(true);
-  // };
   const loginFunction = () => {
     setAuthLogin(true);
   };
   // Fungsi logout
+ 
   const logoutFunction = () => {
-    localStorage.removeItem("access_token"); // Hapus token saat logout
+    localStorage.removeItem("access_token");
     setAuthLogin(false);
+    // setUserRole(null);
   };
+
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      
       <Router>
         <Provider store={store}>
           <Switch>
@@ -317,7 +323,17 @@ export default function App() {
             <ProtectedRoute
               path="/dashboard"
               authLogin={authLogin}
+              // role={userRole}
+              // allowedRoles={["Asesor", "Peserta Ujikom"]}
               component={Dashboard}
+            />
+
+            <ProtectedRoute
+              path="/dashboard-admin"
+              authLogin={authLogin}
+              // role={userRole}
+              // allowedRoles={["Admin"]}
+              component={DashboardAdmin}
             />
 
             {/* Routes for other pages */}
@@ -345,6 +361,11 @@ export default function App() {
               path="/pengisian-apl02"
               authLogin={authLogin}
               component={isiAPL02}
+            />
+            <ProtectedRoute
+              path="/pengisian-portfolio"
+              authLogin={authLogin}
+              component={isiPortfolio}
             />
 
             {/* Redirect if route doesn't match */}

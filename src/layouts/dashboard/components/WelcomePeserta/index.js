@@ -123,8 +123,8 @@ const WelcomePeserta = (props) => {
                 </VuiTypography>
               </VuiBox>
               <VuiTypography
-                component="a"
                 onClick={pilihSkemaKompetensi}
+                component="a"
                 variant="button"
                 color="white"
                 fontWeight="regular"

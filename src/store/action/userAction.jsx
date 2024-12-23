@@ -355,3 +355,36 @@ export const fetchListAPL02Peserta =({access_token})=> {
     })
   }
 }
+
+export const simpanAPL02Peserta = ({access_token, formData}) => {
+  return (dispatch) => {
+    console.log(formData,'di action')
+    axios.post('peserta/pengisian-apl02-detil', formData, {
+      headers:{
+        access_token
+      }
+    })
+    .then(({data})=> {
+      dispatch({type:"SUCCESS_SIMPAN_APL02_PESERTA", payload:data})
+    })
+    .catch(error => {
+      dispatch({type:"ERROR_SIMPAN_APL01", payload: error})
+    })
+  }
+}
+
+export const simpanPortfolioPeserta = ({access_token, links}) => {
+  return (dispatch) => {
+    axios.post('peserta/isi-bukti-portofolio', links, {
+      headers : {
+        access_token
+      }
+    })
+    .then(({data})=> {
+      dispatch({type:"SUCCESS_SIMPAN_PORTFOLIO", payload: data})
+    })
+    .catch(error => {
+      dispatch({type:"ERROR_SIMPAN_APL01", payload: error})
+    })
+  }
+}

@@ -39,19 +39,48 @@ function SignIn(props) {
     dispatch(resetRegister ())
   },[])
 
-  useEffect(() => {
-    if (localStorage.getItem("access_token")) {
-      history.push("/dashboard");
-    }
-    // if(Cookies.get('access_token')){
-    //   history.push("/dashboard")
-    // }
-  }, [history, localStorage.getItem("access_token")]);
+  // useEffect(() => {
+  //   if (localStorage.getItem("use")) {
+  //     history.push("/dashboard");
+  //   }
+  //   // if(Cookies.get('access_token')){
+  //   //   history.push("/dashboard")
+  //   // }
+  // }, []);
+
+
+  
   
   const [rememberMe, setRememberMe] = useState(true);
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const user = useSelector((state) => state.userReducers.userLogin);
   const { loginFunction } = props;
+
+
+  // useEffect(() => {
+  //   if (localStorage.getItem("access_token")) {
+  //     history.push("/dashboard");
+  //   }
+  //   // if(Cookies.get('access_token')){
+  //   //   history.push("/dashboard")
+  //   // }
+  // }, [history, localStorage.getItem("access_token")]);    
+
+  useEffect(() => {
+    // if (localStorage.getItem("access_token")&& user && user.role == "Admin") {
+    //   history.push("/dashboard-admin");
+    // }if (localStorage.getItem("access_token") && user.role !== "Admin") {
+    //   history.push("/dashboard");
+    // }
+    const accessToken = localStorage.getItem("access_token");
+    if (accessToken && user?.role === "Admin") {
+      history.push("/dashboard-admin");
+    } else if (accessToken && user?.role !== "Admin") {
+      history.push("/dashboard");
+    }
+  
+  }, [history, user, localStorage.getItem("access_token")]);
+
 
   const [formInput, setFormInput] = useState({
     userName: "",
@@ -62,6 +91,12 @@ function SignIn(props) {
     e.preventDefault();
     dispatch(fetchLogin(formInput));
     loginFunction();
+ 
+   
+    // history.push("/dashboard")
+
+    // const userRole = localStorage.getItem("userLogin")
+    // console.log(userRole,'di sign i')
   };
   const userNameInput = (input) => {
     const userName = formInput.userName;
@@ -78,7 +113,7 @@ function SignIn(props) {
   }
 
    // Use effect to watch access token and push to dashboard
-   
+  
    
   return (
     <CoverLayout

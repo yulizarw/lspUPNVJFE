@@ -24,4 +24,7 @@ const ProtectedRoute = ({ component: Component,authLogin, ...rest }) => {
   )
 }
 
+
+
+
 export default ProtectedRoute;

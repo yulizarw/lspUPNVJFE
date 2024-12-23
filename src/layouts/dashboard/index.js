@@ -53,7 +53,7 @@ import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
 // store
-import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal, fetchDataDiriAsesor, logOut, lihatJadwalKompetensiUser, fetchListAPL02Peserta  } from "../../store/action/userAction";
+import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal, fetchDataDiriAsesor, logOut, lihatJadwalKompetensiUser, fetchListAPL02Peserta } from "../../store/action/userAction";
 
 
 //loader
@@ -86,13 +86,14 @@ function Dashboard() {
   const [isToggledJadwalAsesor, setIsToggledJadwalAsesor] = useState(false);
   const [pilihSkema, setPilihan] = useState(false)
   const [lengkapiDataAsesorToggle, setToggleAsesor] = useState(false)
+  const [forceRender, setForceRender] = useState(false);
 
   // get data cookies
   // const userLogin = JSON.parse(Cookies.get('userLogin'))
 
- 
-  
- 
+
+
+
   // lotie loader
   const defaultOptions = {
     loop: true,
@@ -112,13 +113,18 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
+    console.log("dataUser updated:", dataUser); // Debugging untuk memastikan perubahan
+  }, [dataUser]);
+  
+
+  useEffect(() => {
     if (userLogin?.access_token) {
       dispatch(fetchDataPribadi(userLogin.access_token));
       dispatch(fetchAllJadwal(userLogin.access_token));
       dispatch(fetchJadwalUjikomPeserta(userLogin.access_token));
       dispatch(fetchDataDiriAsesor(userLogin.access_token));
       dispatch(lihatJadwalKompetensiUser(userLogin.access_token))
-      dispatch(fetchListAPL02Peserta({access_token: userLogin.access_token}))
+      dispatch(fetchListAPL02Peserta({ access_token: userLogin.access_token }))
     }
   }, [userLogin])
 
@@ -169,8 +175,11 @@ function Dashboard() {
       </DashboardLayout>
     );
   }
+
+
   const pilihSkemaKompetensi = () => {
-    setPilihan((prevState) => !prevState)
+    setPilihan((prevState) => !prevState);
+   
   }
 
   const onClickChecklistPesertaAPL01 = () => {
@@ -180,7 +189,54 @@ function Dashboard() {
   const onClickChecklistPesertaAPL02 = () => {
     history.push('/pengisian-apl02')
   }
+  const onClickChecklistPortfolio = () => {
+    history.push('/pengisian-portfolio')
+  }
+  const renderTableContent = () => {
+    if (userLogin?.role === "Peserta Ujikom" && isToggled === false && pilihSkema === true && dataUser.skemaUjikomId == null) {
+      return <TablePilihSkema allJadwal={allJadwal} />;
+    }
+  
+    if (userLogin?.role === "Peserta Ujikom" && isToggled === false) {
+      return (
+        <TableJadwalUjikom
+          jadwalPeserta={jadwalPeserta}
+          allJadwal={allJadwal}
+          allJadwalError={allJadwalError}
+          loadAllJadwal={loadAllJadwal}
+          dataUser={dataUser}
+        />
+      );
+    }
+  
+    if (userLogin?.role === "Peserta Ujikom" && isToggled === true) {
+      return <JadwalUjikom />;
+    }
 
+    if (userLogin?.role === 'Asesor' && dataAsesor == null) {
+      return <TableLengkapiDataDiriAsesor
+      allJadwal={allJadwal}
+      userLogin={userLogin}
+    />
+    }
+
+    if (isToggledJadwalAsesor === false ) {
+      return <TableJadwalUjikom
+      jadwalPeserta={dataAsesor}
+      allJadwal={allJadwal}
+      allJadwalError={allJadwalError}
+      loadAllJadwal={loadAllJadwal}
+      dataUser={dataUser}
+      dataAsesor={dataAsesor}
+    />
+    } else {
+      return  <TableJadwalAsesor></TableJadwalAsesor>
+    }
+
+  
+    return null;
+  };
+ 
   return (
     <DashboardLayout>
       <DashboardNavbar userLogin={userLogin} signOut={signOut} backToHome={backToHome} />
@@ -191,7 +247,7 @@ function Dashboard() {
             <Grid item xs={12} lg={8} xl={5} spacing={3}>
               {userLogin.role === 'Peserta Ujikom' ?
                 (
-                  <WelcomePeserta userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} isiDataDiriPeserta={isiDataDiriPeserta} pilihSkemaKompetensi={pilihSkemaKompetensi} />
+                  <WelcomePeserta  key={forceRender}  userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} isiDataDiriPeserta={isiDataDiriPeserta} pilihSkemaKompetensi={pilihSkemaKompetensi} />
                 ) :
 
                 (<WelcomeAsesor userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensiAsesor={lihatJadwalKompetensiAsesor} dataAsesor={dataAsesor} lengkapiDataDiriAsesor={lengkapiDataDiriAsesor} />)
@@ -199,61 +255,34 @@ function Dashboard() {
               }
 
             </Grid>
-            
+
             <Grid item xs={12} lg={8} xl={7}>
               {/* detil TUK */}
               {userLogin.role == "Peserta Ujikom" ? (
                 <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />
               )
-              : userLogin.role == "Asesor" ? (<ReferralTrackingAsesor allJadwal={allJadwal} dataAsesor={dataAsesor} dataUser={dataUser} jadwalUjiUser={jadwalUjiUser} />) : 
-              ( <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />)
-            
-            }
+                : userLogin.role == "Asesor" ? (<ReferralTrackingAsesor allJadwal={allJadwal} dataAsesor={dataAsesor} dataUser={dataUser} jadwalUjiUser={jadwalUjiUser} />) :
+                  (<ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />)
+
+              }
 
             </Grid>
           </Grid>
         </VuiBox>
         <Grid mb={3} container spacing={3} direction="row" justifyContent="center" alignItems="stretch">
-        
           <Grid item xs={12} md={6} lg={8}>
-            {userLogin?.role === 'Asesor' && dataAsesor == null ? (
-              <TableLengkapiDataDiriAsesor
-                allJadwal={allJadwal}
-                userLogin={userLogin}
-              />
-            ) : userLogin?.role === 'Peserta Ujikom' || userLogin.role === "Admin" ? (
-              isToggled === false ? (
-                <TableJadwalUjikom
-                  jadwalPeserta={jadwalPeserta}
-                  allJadwal={allJadwal}
-                  allJadwalError={allJadwalError}
-                  loadAllJadwal={loadAllJadwal}
-                  dataUser={dataUser}
-                />
-              ) : (
-                <JadwalUjikom />
-              
-              )
-            ) : isToggledJadwalAsesor === false ? (
-              <TableJadwalUjikom
-                jadwalPeserta={dataAsesor}
-                allJadwal={allJadwal}
-                allJadwalError={allJadwalError}
-                loadAllJadwal={loadAllJadwal}
-                dataUser={dataUser}
-                dataAsesor={dataAsesor}
-              />
-             
-            ) : (
-            <TableJadwalAsesor></TableJadwalAsesor>
-        
-            )}
+            {renderTableContent()}
           </Grid>
-
+            {/* {userLogin?.role === 'Peserta Ujikom' && dataUser} */}
 
           <Grid item xs={12} md={6} lg={4}>
             {userLogin.role === 'Peserta Ujikom' || userLogin.role === 'Admin' ?
-              (<ChecklistPeserta dataUser={dataUser} onClickChecklistPesertaAPL01={onClickChecklistPesertaAPL01} jadwalUjiUser={jadwalUjiUser} onClickChecklistPesertaAPL02={onClickChecklistPesertaAPL02} />) :
+              (<ChecklistPeserta
+                dataUser={dataUser}
+                onClickChecklistPesertaAPL01={onClickChecklistPesertaAPL01}
+                jadwalUjiUser={jadwalUjiUser}
+                onClickChecklistPesertaAPL02={onClickChecklistPesertaAPL02}
+                onClickChecklistPortfolio={onClickChecklistPortfolio} />) :
               (<ChecklistAsesor dataAsesor={dataAsesor} jadwalUjiUser={jadwalUjiUser} />)
             }
 

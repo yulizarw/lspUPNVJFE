@@ -1,8 +1,8 @@
 import React from 'react';
-//  lalu logic untuk peserta ngambil apl02dynamic karena akan hubungan ke hapus
+
 // @mui material components
 import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
+
 import { Card, LinearProgress, Stack, Radio, RadioGroup, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
@@ -11,83 +11,42 @@ import { useState, useEffect } from "react";
 // Vision UI Dashboard React components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
-import VuiProgress from "components/VuiProgress";
-import GradientBorder from "examples/GradientBorder";
+
 import VuiInput from "components/VuiInput";
 import VuiButton from "components/VuiButton";
-import VuiSwitch from "components/VuiSwitch";
+
 import VuiAlert from 'components/VuiAlert';
 // Vision UI Dashboard React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCard";
-import linearGradient from "assets/theme/functions/linearGradient";
 
-// / Vision UI Dashboard assets
-import radialGradient from "assets/theme/functions/radialGradient";
-import rgba from "assets/theme/functions/rgba";
-import palette from "assets/theme/base/colors";
-import borders from "assets/theme/base/borders";
-import IconButton from "@mui/material/IconButton";
 
 // import { Radio, RadioGroup } from '@chakra-ui/react'
 // Vision UI Dashboard React base styles
-import typography from "assets/theme/base/typography";
+
 import colors from "assets/theme/base/colors";
-
-// Dashboard layout components
-import WelcomePeserta from "layouts/dashboard/components/WelcomePeserta";
-import WelcomeAsesor from "layouts/dashboard/components/WelcomeAsesor"
-import SkemaUjikom from "layouts/dashboard/components/SkemaUjikom";
-import ChecklistPeserta from "layouts/dashboard/components/CheklistPeserta";
-import SatisfactionRate from "layouts/dashboard/components/SatisfactionRate";
-import ReferralTracking from "layouts/dashboard/components/ReferralTracking";
-// import TableJadwalUjikom from "./components/TabelJadwalUjikomAll/tableJadwalSkemaUjikom";
-import JadwalUjikom from "layouts/pesertaUjikom/jadwalUjikom";
-
-// React icons
-import { IoIosRocket } from "react-icons/io";
-import { IoGlobe } from "react-icons/io5";
-import { IoBuild } from "react-icons/io5";
-import { IoWallet } from "react-icons/io5";
-import { IoDocumentText } from "react-icons/io5";
-import { FaShoppingCart } from "react-icons/fa";
-
-// Data
-import LineChart from "examples/Charts/LineCharts/LineChart";
-import BarChart from "examples/Charts/BarCharts/BarChart";
-import { lineChartDataDashboard } from "layouts/dashboard/data/lineChartData";
-import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptions";
-import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
-import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
 // store
 import { logOut } from "../../store/action/userAction"
-import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal } from "../../store/action/userAction";
+import { simpanAPL02Peserta } from "../../store/action/userAction";
 
 import logoUpn from "../../assets/images/LOGO UPNVJ.png"
 //loader
 import Lottie from "react-lottie";
 import * as loaderData from "../../assets/loader/lottieLego.json"
-// import TablePilihSkema from "./components/TabelJadwalUjikomAll/tablePilihSkema";
-
-import { listAPL02Asesor, addMUK, destroyMUK } from "../../store/action/userAction"
-import { userReducers } from 'store/reducer/userReducer';
 
 function isiAPL02() {
   const dispatch = useDispatch();
   const history = useHistory();
   const userLogin = useSelector((state) => state.userReducers.userLogin);
 
-
   const loadingJadwal = useSelector((state) => state.userReducers.loadingJadwalFetch);
 
   const loadAllJadwal = useSelector((state) => state.userReducers.loadingJadwalFetch)
 
-  const listAPL02 = useSelector((state) => state.userReducers.listAPL02Asesor)
   const successPostMUK = useSelector((state) => state.userReducers.statusPostMUK)
-  const statusErrorPostMUK = useSelector((state) => state.userReducers.errorPostMUK)
+
   const listAPL02Peserta = useSelector((state) => state.userReducers.listAPL02Peserta)
 
   const dataPribadi = useSelector((state) => state.userReducers.dataPribadi)
@@ -104,6 +63,7 @@ function isiAPL02() {
   };
 
   useEffect(() => {
+    // console.log("listAPL02Peserta:", listAPL02Peserta); // Debug initial data
     // Simulate fetching data and setting it to formData.dynamicFields
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -141,14 +101,7 @@ function isiAPL02() {
     dynamicFields: [],
   });
 
-  // generic handle change input all
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevFormData) => ({
-  //     ...prevFormData,
-  //     [name]: value,
-  //   }));
-  // };
+
   // Handle changes for namaSkema
 
   // Update a specific dynamic field
@@ -156,14 +109,14 @@ function isiAPL02() {
     setFormData((prevFormData) => {
       const updatedFields = [...prevFormData.dynamicFields];
       updatedFields[index][key] = value;
+      // console.log(updatedFields,'debug')
       return { ...prevFormData, dynamicFields: updatedFields };
     });
   };
   // Handle form submission
   const handleSubmit = (e) => {
-    // e.preventDefault(); agar dia ngerefresh page jadi gk pwa tapi udah di save di cek access token berkala di dashboard
-    // Submit the formData object to the backend
-    dispatch(addMUK({ access_token: userLogin.access_token, formData, listAPL02 }))
+
+    dispatch(simpanAPL02Peserta({ access_token: userLogin.access_token, formData: formData.dynamicFields }))
   };
   // end
 

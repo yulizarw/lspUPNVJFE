@@ -1,5 +1,3 @@
-import { listAPL02Asesor } from "store/action/userAction"
-import { lihatJadwalKompetensiUser } from "store/action/userAction"
 
 const initialState = {
   userLogin: JSON.parse(localStorage.getItem("userLogin")) || null,
@@ -58,6 +56,13 @@ const initialState = {
   errorSimpanAPL01: "",
 
   listAPL02Peserta:[],
+
+  // simpan apl02 peserta
+  statusAPL02Peserta : "",
+  // portfolio peserta
+  statusPostPortfolioPeserta: "",
+
+
 
 }
 
@@ -180,6 +185,12 @@ export const userReducers = (state = initialState, { type, payload }) => {
     
     case "SUCCESS_GET_LIST_APL02":
       return {...state,listAPL02Peserta:payload}
+    
+    case "SUCCESS_SIMPAN_APL02_PESERTA" :
+      return {...state, statusAPL02Peserta:payload}
+    
+    case "SUCCESS_SIMPAN_PORTFOLIO" :
+      return {...state, statusPostPortfolioPeserta:payload}
     
     default:
       return state
