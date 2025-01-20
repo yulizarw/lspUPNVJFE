@@ -33,6 +33,8 @@ import { useState, useEffect } from "react";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiProgress from "components/VuiProgress";
+import VuiInput from "components/VuiInput";
+import VuiButton from "components/VuiButton";
 
 // Vision UI Dashboard React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -53,7 +55,7 @@ import ChecklistPeserta from "layouts/dashboard/components/CheklistPeserta";
 import ChecklistAsesor from "layouts/ScreenAsesor/ChecklistAsesor";
 import SatisfactionRate from "layouts/dashboard/components/SatisfactionRate";
 import ReferralTracking from "layouts/dashboard/components/ReferralTracking";
-import TableJadwalUjikom from "layouts/dashboard/components/TabelJadwalUjikomAll/tableJadwalSkemaUjikom";
+import TablePengurusanSkema from "./TabelSkemaUjikom/tablePengurusanSkemaUjikom";
 import JadwalUjikom from "layouts/pesertaUjikom/jadwalUjikom";
 import TableLengkapiDataDiriAsesor from "layouts/ScreenAsesor/TableLengkapiIsiData"
 import TableJadwalAsesor from "layouts/ScreenAsesor/TableJadwalAsesor"
@@ -80,13 +82,15 @@ import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
 // store
-import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal, fetchDataDiriAsesor, logOut, lihatJadwalKompetensiUser, fetchListAPL02Peserta } from "../../store/action/userAction";
-
+import { logOut, fetchAllJadwal } from "../../store/action/userAction";
+import { FetchDataSkemaUjikom } from "store/action/adminAction";
 
 //loader
 import Lottie from "react-lottie";
 import * as loaderData from "../../assets/loader/lottieLego.json"
 import { BsDisplay } from "react-icons/bs";
+
+import logoUpn from "../../assets/images/LOGO UPNVJ.png"
 
 
 // import DeckGL from '@deck.gl/react';
@@ -94,36 +98,22 @@ import { BsDisplay } from "react-icons/bs";
 //store
 // Vision UI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { addNewSkemaUjikom } from "store/action/adminAction";
 
-function DashboardAdmin() {
+function ManageSkemaUjikom() {
   const dispatch = useDispatch();
   const history = useHistory();
   const userLogin = useSelector((state) => state.userReducers.userLogin);
   const dataUser = useSelector((state) => state.userReducers.dataPribadi) || {};
-  const jadwalPeserta = useSelector((state) => state.userReducers.jadwalPesertaUjikom) || {};
-  const jadwalPesertaError = useSelector((state) => state.userReducers.jadwalPesertaError);
-  const loadingJadwal = useSelector((state) => state.userReducers.loadingJadwalFetch);
-  const allJadwal = useSelector((state) => state.userReducers.allJadwal) || {}
-  const allJadwalError = useSelector((state) => state.userReducers.allJadwalError)
-  const loadAllJadwal = useSelector((state) => state.userReducers.loadingJadwalFetch)
-  const statusPilihSkemaPeserta = useSelector((state) => state.userReducers.statusPilihSkemaPeserta)
-
-  const dataAsesor = useSelector((state) => state.userReducers.asesorData)
-  const dataAsesorError = useSelector((state) => state.userReducers.asesorDataError)
-  const loadDataAsesor = useSelector((state) => state.userReducers.loadDataAsesor)
-
-  const jadwalUjiUser = useSelector((state) => state.userReducers.lihatJadwalUjiUser)
+  const findInfoSkema = useSelector((state) => state.userReducers.allJadwal)
+  const loadingInfoSkema = useSelector((state) => state.userReducers.loadingJadwalFetch)
 
   const [loading, setLoading] = useState(true); // State to manage loading status
-  const [isToggled, setIsToggled] = useState(false);
-  const [isToggledJadwalAsesor, setIsToggledJadwalAsesor] = useState(false);
-  const [pilihSkema, setPilihan] = useState(false)
-  const [lengkapiDataAsesorToggle, setToggleAsesor] = useState(false)
-  const [forceRender, setForceRender] = useState(false);
+
   const [controller] = useVisionUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
-  // get data cookies
+
 
   // lotie loader
   const defaultOptions = {
@@ -136,6 +126,13 @@ function DashboardAdmin() {
   };
 
   useEffect(() => {
+    if (userLogin?.access_token) {
+      // dispatch (FetchDataSkemaUjikom (userLogin.access_token))
+      // dispatch(fetchAllJadwal(userLogin.access_token))
+    }
+  }, [userLogin])
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false); // Set loading to false after 2 seconds (2000ms)
     }, 2000); // Adjust the delay as needed
@@ -143,56 +140,16 @@ function DashboardAdmin() {
     return () => clearTimeout(timer); // Clean up the timeout on component unmount
   }, []);
 
-  useEffect(() => {
-    console.log("dataUser updated:", dataUser); // Debugging untuk memastikan perubahan
-  }, [dataUser]);
-
-  useEffect(() => {
-    if (userLogin?.access_token) {
-      dispatch(fetchDataPribadi(userLogin.access_token));
-      dispatch(fetchAllJadwal(userLogin.access_token));
-      dispatch(fetchJadwalUjikomPeserta(userLogin.access_token));
-      dispatch(fetchDataDiriAsesor(userLogin.access_token));
-      dispatch(lihatJadwalKompetensiUser(userLogin.access_token))
-      dispatch(fetchListAPL02Peserta({ access_token: userLogin.access_token }))
-    }
-  }, [userLogin])
-
-  useEffect(() => {
-    if (statusPilihSkemaPeserta === true) {
-      setPilihan((prevState) => !prevState)
-    }
-  }, [statusPilihSkemaPeserta])
-
   const backToHome = () => {
     history.push('/dashboard-admin')
   }
-
-  const lihatJadwalKompetensi = () => {
-    setIsToggled((prevState) => !prevState)
-  }
-
-
-  const lihatJadwalKompetensiAsesor = () => {
-    console.log(dataAsesor)
-    setIsToggledJadwalAsesor((prevstate) => !prevstate)
-  }
-
-  const lengkapiDataDiriAsesor = () => {
-    setToggleAsesor((prevState) => !prevState)
-  }
-
-  const isiDataDiriPeserta = () => {
-    history.push("/isi-data-diri")
-  }
-
   const signOut = () => {
     localStorage.clear();
     dispatch(logOut());
     history.push("/");
   };
 
-  if (loading || loadingJadwal || loadAllJadwal || loadDataAsesor) {
+  if (loadingInfoSkema) {
     return (
       <DashboardLayout>
         <Grid>
@@ -203,67 +160,6 @@ function DashboardAdmin() {
       </DashboardLayout>
     );
   }
-
-
-  const pilihSkemaKompetensi = () => {
-    setPilihan((prevState) => !prevState);
-
-  }
-
-  const onClickChecklistPesertaAPL01 = () => {
-    history.push('/isi-apl-01')
-  }
-
-  const onClickChecklistPesertaAPL02 = () => {
-    history.push('/pengisian-apl02')
-  }
-  const onClickChecklistPortfolio = () => {
-    history.push('/pengisian-portfolio')
-  }
-  const renderTableContent = () => {
-    if (userLogin?.role === "Peserta Ujikom" && isToggled === false && pilihSkema === true && dataUser.skemaUjikomId == null) {
-      return <TablePilihSkema allJadwal={allJadwal} />;
-    }
-
-    if (userLogin?.role === "Peserta Ujikom" && isToggled === false) {
-      return (
-        <TableJadwalUjikom
-          jadwalPeserta={jadwalPeserta}
-          allJadwal={allJadwal}
-          allJadwalError={allJadwalError}
-          loadAllJadwal={loadAllJadwal}
-          dataUser={dataUser}
-        />
-      );
-    }
-
-    if (userLogin?.role === "Peserta Ujikom" && isToggled === true) {
-      return <JadwalUjikom />;
-    }
-
-    if (userLogin?.role === 'Asesor' && dataAsesor == null) {
-      return <TableLengkapiDataDiriAsesor
-        allJadwal={allJadwal}
-        userLogin={userLogin}
-      />
-    }
-
-    if (isToggledJadwalAsesor === false) {
-      return <TableJadwalUjikom
-        jadwalPeserta={dataAsesor}
-        allJadwal={allJadwal}
-        allJadwalError={allJadwalError}
-        loadAllJadwal={loadAllJadwal}
-        dataUser={dataUser}
-        dataAsesor={dataAsesor}
-      />
-    } else {
-      return <TableJadwalAsesor></TableJadwalAsesor>
-    }
-
-
-    return null;
-  };
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -281,11 +177,44 @@ function DashboardAdmin() {
     }
   };
 
+  const [dynamicFields, setDynamicFields] = useState([]);
+
+  // Tambah field baru
+  const addDynamicField = () => {
+    setDynamicFields([
+      ...dynamicFields,
+      {
+        namaSkema: "",
+        nomorSkema: "",
+        sektorSkema: "",
+        jenisSkema: "",
+        // kodeUnitKompetensi: "",
+      },
+    ]);
+  };
+
+  // Hapus field
+  const removeDynamicField = (index) => {
+    setDynamicFields(dynamicFields.filter((_, i) => i !== index));
+  };
+
+  // Update field tertentu
+  const handleFieldChange = (index, field, value) => {
+    const updatedFields = [...dynamicFields];
+    updatedFields[index][field] = value;
+    setDynamicFields(updatedFields);
+  };
+
+  // Simpan data (misalnya, kirim ke backend)
+  const handleSave = () => {
+    console.log("Data Skema:", dynamicFields);
+    // Dispatch action atau kirim ke backend
+    dispatch(addNewSkemaUjikom ({access_token: userLogin.access_token, dynamicFields}))
+  };
+
+
   return (
-
-
-
-    <Grid container style={{ height: "100vh" }}>
+    <Grid container style={{ minHeight: "100vh" }}>
       {/* Sidebar */}
       <Grid
         item
@@ -309,54 +238,136 @@ function DashboardAdmin() {
       <Grid item xs={10} style={{ padding: "20px" }}>
         <DashboardNavbar userLogin={userLogin} signOut={signOut} />
         <VuiBox py={3}>
-          {/* Content goes here */}
-          {/* <div>Main Content Area</div> */}
+
           <VuiBox py={0} mb={3}>
             <Grid container spacing="18px">
               <Grid item xs={12} lg={8} xl={5} spacing={3}>
-                {userLogin.role === 'Peserta Ujikom' ?
-                  (
-                    <WelcomePeserta key={forceRender} userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} isiDataDiriPeserta={isiDataDiriPeserta} pilihSkemaKompetensi={pilihSkemaKompetensi} />
-                  ) :
+                {/* {JSON.stringify(findInfoSkema)} */}
 
-                  (<WelcomeAsesor userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensiAsesor={lihatJadwalKompetensiAsesor} dataAsesor={dataAsesor} lengkapiDataDiriAsesor={lengkapiDataDiriAsesor} />)
-
-                }
 
               </Grid>
 
               <Grid item xs={12} lg={8} xl={7}>
-                {/* detil TUK */}
-                {userLogin.role == "Peserta Ujikom" ? (
-                  <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />
-                )
-                  : userLogin.role == "Asesor" ? (<ReferralTrackingAsesor allJadwal={allJadwal} dataAsesor={dataAsesor} dataUser={dataUser} jadwalUjiUser={jadwalUjiUser} />) :
-                    (<ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />)
 
-                }
 
               </Grid>
             </Grid>
           </VuiBox>
           <Grid mb={3} container spacing={3} direction="row" justifyContent="center" alignItems="stretch">
             <Grid item xs={12} md={6} lg={8}>
-              {renderTableContent()}
+              <TablePengurusanSkema
+                // jadwalPeserta={jadwalPeserta}
+                allJadwal={findInfoSkema}
+                // allJadwalError={allJadwalError}
+                loadAllJadwal={loadingInfoSkema}
+                dataUser={dataUser}
+              />
             </Grid>
             {/* {userLogin?.role === 'Peserta Ujikom' && dataUser} */}
 
             <Grid item xs={12} md={6} lg={4}>
-              {userLogin.role === 'Peserta Ujikom' || userLogin.role === 'Admin' ?
-                (<ChecklistPeserta
-                  dataUser={dataUser}
-                  onClickChecklistPesertaAPL01={onClickChecklistPesertaAPL01}
-                  jadwalUjiUser={jadwalUjiUser}
-                  onClickChecklistPesertaAPL02={onClickChecklistPesertaAPL02}
-                  onClickChecklistPortfolio={onClickChecklistPortfolio} />) :
-                (<ChecklistAsesor dataAsesor={dataAsesor} jadwalUjiUser={jadwalUjiUser} />)
-              }
+
 
             </Grid>
           </Grid>
+        </VuiBox>
+
+        <VuiBox py={3} sx={{
+          "& th": {
+            borderBottom: ({ borders: { borderWidth }, palette: { grey } }) =>
+              `${borderWidth[1]} solid ${grey[700]}`,
+          },
+          "& .MuiTableRow-root:not(:last-child)": {
+            "& td": {
+              borderBottom: ({ borders: { borderWidth }, palette: { grey } }) =>
+                `${borderWidth[1]} solid ${grey[700]}`,
+            },
+          },
+        }}>
+          <VuiBox display="flex" alignItems="center" mb="32px">
+            <VuiBox py={3} sx={{
+              "& th": {
+                borderBottom: ({ borders: { borderWidth }, palette: { grey } }) =>
+                  `${borderWidth[1]} solid ${grey[700]}`,
+              },
+              "& .MuiTableRow-root:not(:last-child)": {
+                "& td": {
+                  borderBottom: ({ borders: { borderWidth }, palette: { grey } }) =>
+                    `${borderWidth[1]} solid ${grey[700]}`,
+                },
+              },
+            }}>
+
+              <VuiBox py={3}>
+                <VuiBox mb={2}>
+                  <VuiButton color="info" onClick={addDynamicField}>
+                    Tambah Skema Baru
+                  </VuiButton>
+                </VuiBox>
+
+                {dynamicFields.map((field, index) => (
+                  <VuiBox key={index} mb={2} style={{ border: "1px solid #ddd", padding: "16px", borderRadius: "8px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <VuiTypography component="label" variant="button" color="white" fontWeight="medium">Nama Skema</VuiTypography>
+                        <VuiInput
+                          placeholder="Nama Skema"
+                          value={field.namaSkema}
+                          onChange={(e) => handleFieldChange(index, "namaSkema", e.target.value)}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                      <VuiTypography component="label" variant="button" color="white" fontWeight="medium">Nomor Skema</VuiTypography>
+                        <VuiInput
+                          placeholder="Nomor Skema"
+                          value={field.nomorSkema}
+                          onChange={(e) => handleFieldChange(index, "nomorSkema", e.target.value)}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                      <VuiTypography component="label" variant="button" color="white" fontWeight="medium">Sektor Skema</VuiTypography>
+                        <VuiInput
+                          placeholder="Sektor Skema"
+                          value={field.sektorSkema}
+                          onChange={(e) => handleFieldChange(index, "sektorSkema", e.target.value)}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                      <VuiTypography component="label" variant="button" color="white" fontWeight="medium">Jenis Skema</VuiTypography>
+                        <VuiInput
+                          placeholder="Jenis Skema"
+                          value={field.jenisSkema}
+                          onChange={(e) => handleFieldChange(index, "jenisSkema", e.target.value)}
+                        />
+                      </Grid>
+                      {/* <Grid item xs={12}>
+                      <VuiTypography component="label" variant="button" color="white" fontWeight="medium">Nama Skema</VuiTypography>
+                        <VuiInput
+                          placeholder="Kode Unit Kompetensi"
+                          value={field.kodeUnitKompetensi}
+                          onChange={(e) => handleFieldChange(index, "kodeUnitKompetensi", e.target.value)}
+                        />
+                      </Grid> */}
+                      <Grid item xs={12} style={{ textAlign: "right" }}>
+                        <VuiButton color="error" onClick={() => removeDynamicField(index)}>
+                          Hapus
+                        </VuiButton>
+                      </Grid>
+                    </Grid>
+                  </VuiBox>
+                ))}
+
+                {dynamicFields.length > 0 && (
+                  <VuiBox mt={3}>
+                    <VuiButton color="success" onClick={handleSave}>
+                      Simpan Semua Skema
+                    </VuiButton>
+                  </VuiBox>
+                )}
+              </VuiBox>
+            </VuiBox>
+          </VuiBox>
+
         </VuiBox>
         <Footer />
       </Grid>
@@ -366,5 +377,5 @@ function DashboardAdmin() {
   )
 }
 
-export default DashboardAdmin
+export default ManageSkemaUjikom
 

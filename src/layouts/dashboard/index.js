@@ -36,6 +36,8 @@ import TableJadwalUjikom from "./components/TabelJadwalUjikomAll/tableJadwalSkem
 import JadwalUjikom from "layouts/pesertaUjikom/jadwalUjikom";
 import TableLengkapiDataDiriAsesor from "layouts/ScreenAsesor/TableLengkapiIsiData"
 import TableJadwalAsesor from "layouts/ScreenAsesor/TableJadwalAsesor"
+import routesSidenavAsesor from "../ScreenAsesor/Sidenav/routes"
+
 // React icons
 import { IoIosRocket } from "react-icons/io";
 import { IoGlobe } from "react-icons/io5";
@@ -61,6 +63,11 @@ import Lottie from "react-lottie";
 import * as loaderData from "../../assets/loader/lottieLego.json"
 import TablePilihSkema from "./components/TabelJadwalUjikomAll/tablePilihSkema";
 import ReferralTrackingAsesor from "layouts/ScreenAsesor/ReferralTrackingAsesor";
+import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
+
+
+import Sidenav from "../ScreenAsesor/Sidenav/index"
+import { getAllMUKList } from "store/action/asesorAction";
 
 function Dashboard() {
   const dispatch = useDispatch();
@@ -87,13 +94,11 @@ function Dashboard() {
   const [pilihSkema, setPilihan] = useState(false)
   const [lengkapiDataAsesorToggle, setToggleAsesor] = useState(false)
   const [forceRender, setForceRender] = useState(false);
-
+  const [controller] = useVisionUIController();
+  const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
+  const [onMouseEnter, setOnMouseEnter] = useState(false);
   // get data cookies
   // const userLogin = JSON.parse(Cookies.get('userLogin'))
-
-
-
-
   // lotie loader
   const defaultOptions = {
     loop: true,
@@ -115,7 +120,7 @@ function Dashboard() {
   useEffect(() => {
     console.log("dataUser updated:", dataUser); // Debugging untuk memastikan perubahan
   }, [dataUser]);
-  
+
 
   useEffect(() => {
     if (userLogin?.access_token) {
@@ -125,6 +130,7 @@ function Dashboard() {
       dispatch(fetchDataDiriAsesor(userLogin.access_token));
       dispatch(lihatJadwalKompetensiUser(userLogin.access_token))
       dispatch(fetchListAPL02Peserta({ access_token: userLogin.access_token }))
+      // dispatch(getAllMUKList({ access_token: userLogin.access_token, namaSkema: dataAsesor.Asesor.SkemaUjikom.namaSkema }))
     }
   }, [userLogin])
 
@@ -179,7 +185,7 @@ function Dashboard() {
 
   const pilihSkemaKompetensi = () => {
     setPilihan((prevState) => !prevState);
-   
+
   }
 
   const onClickChecklistPesertaAPL01 = () => {
@@ -192,11 +198,16 @@ function Dashboard() {
   const onClickChecklistPortfolio = () => {
     history.push('/pengisian-portfolio')
   }
+
+
+
+
+
   const renderTableContent = () => {
     if (userLogin?.role === "Peserta Ujikom" && isToggled === false && pilihSkema === true && dataUser.skemaUjikomId == null) {
       return <TablePilihSkema allJadwal={allJadwal} />;
     }
-  
+
     if (userLogin?.role === "Peserta Ujikom" && isToggled === false) {
       return (
         <TableJadwalUjikom
@@ -208,50 +219,81 @@ function Dashboard() {
         />
       );
     }
-  
+
     if (userLogin?.role === "Peserta Ujikom" && isToggled === true) {
       return <JadwalUjikom />;
     }
 
     if (userLogin?.role === 'Asesor' && dataAsesor == null) {
       return <TableLengkapiDataDiriAsesor
-      allJadwal={allJadwal}
-      userLogin={userLogin}
-    />
+        allJadwal={allJadwal}
+        userLogin={userLogin}
+      />
     }
 
-    if (isToggledJadwalAsesor === false ) {
+    if (isToggledJadwalAsesor === false) {
       return <TableJadwalUjikom
-      jadwalPeserta={dataAsesor}
-      allJadwal={allJadwal}
-      allJadwalError={allJadwalError}
-      loadAllJadwal={loadAllJadwal}
-      dataUser={dataUser}
-      dataAsesor={dataAsesor}
-    />
+        jadwalPeserta={dataAsesor}
+        allJadwal={allJadwal}
+        allJadwalError={allJadwalError}
+        loadAllJadwal={loadAllJadwal}
+        dataUser={dataUser}
+        dataAsesor={dataAsesor}
+      />
     } else {
-      return  <TableJadwalAsesor></TableJadwalAsesor>
+      return <TableJadwalAsesor></TableJadwalAsesor>
     }
 
-  
+
     return null;
   };
- 
+  // Open sidenav when mouse enter on mini sidenav
+  const handleOnMouseEnter = () => {
+    if (miniSidenav && !onMouseEnter) {
+      setMiniSidenav(dispatch, false);
+      setOnMouseEnter(true);
+    }
+  };
+
+  // Close sidenav when mouse leave mini sidenav
+  const handleOnMouseLeave = () => {
+    if (onMouseEnter) {
+      setMiniSidenav(dispatch, true);
+      setOnMouseEnter(false);
+    }
+  };
   return (
-    <DashboardLayout>
-      <DashboardNavbar userLogin={userLogin} signOut={signOut} backToHome={backToHome} />
-      <VuiBox py={3}>
+    <Grid container style={{ height: "100vh" }}>
+      <Grid
+        item
+        xs={2}
+        style={{
+          // backgroundColor: "#1A2035",
+          // color: "#FFFFFF",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Sidenav color={sidenavColor}
+          brand=""
+          brandName="LSP UPNVJ"
+          routes={routesSidenavAsesor}
+          onMouseEnter={handleOnMouseEnter}
+          onMouseLeave={handleOnMouseLeave} />
+      </Grid>
+      <Grid item xs={10} style={{ padding: "20px" }}>
+        <DashboardNavbar userLogin={userLogin} signOut={signOut} backToHome={backToHome} />
 
         <VuiBox py={0} mb={3}>
           <Grid container spacing="18px">
             <Grid item xs={12} lg={8} xl={5} spacing={3}>
+
               {userLogin.role === 'Peserta Ujikom' ?
                 (
-                  <WelcomePeserta  key={forceRender}  userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} isiDataDiriPeserta={isiDataDiriPeserta} pilihSkemaKompetensi={pilihSkemaKompetensi} />
+                  <WelcomePeserta key={forceRender} userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensi={lihatJadwalKompetensi} isiDataDiriPeserta={isiDataDiriPeserta} pilihSkemaKompetensi={pilihSkemaKompetensi} />
                 ) :
 
                 (<WelcomeAsesor userLogin={userLogin} dataUser={dataUser} lihatJadwalKompetensiAsesor={lihatJadwalKompetensiAsesor} dataAsesor={dataAsesor} lengkapiDataDiriAsesor={lengkapiDataDiriAsesor} />)
-
               }
 
             </Grid>
@@ -273,7 +315,7 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={8}>
             {renderTableContent()}
           </Grid>
-            {/* {userLogin?.role === 'Peserta Ujikom' && dataUser} */}
+          {/* {userLogin?.role === 'Peserta Ujikom' && dataUser} */}
 
           <Grid item xs={12} md={6} lg={4}>
             {userLogin.role === 'Peserta Ujikom' || userLogin.role === 'Admin' ?
@@ -289,9 +331,8 @@ function Dashboard() {
           </Grid>
         </Grid>
 
-      </VuiBox>
-      <Footer />
-    </DashboardLayout>
+      </Grid>
+    </Grid>
   );
 }
 

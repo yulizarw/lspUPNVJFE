@@ -125,7 +125,7 @@ import { useVisionUIController, setMiniSidenav, setTransparentSidenav } from "co
 
 // Vision UI Dashboard React icons
 import SimmmpleLogo from "examples/Icons/SimmmpleLogo";
-import logoUpn from "../../assets/images/LOGO UPNVJ.png"
+import logoUpn from "../../../assets/images/LOGO UPNVJ.png"
 
 // function Sidenav({ color, brand, brandName, routes, ...rest }) {
 function Sidenav({ color, brandName, routes, ...rest }) {

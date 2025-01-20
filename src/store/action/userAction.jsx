@@ -185,13 +185,9 @@ export const fetchDataDiriAsesor = (access_token) => {
       }
     })
       .then(({ data }) => {
-        // localStorage.setItem('namaSkema', data.SkemaUjikom.namaSkema)
-        // Cookies.set('dataAsesor', JSON.stringify(data), { expires: 7 });
-
         dispatch({ type: "SUCCESS_FETCH_DATA_ASESOR", payload: data })
       })
       .catch(error => {
-
         dispatch({ type: "ERROR_FETCH_DATA_ASESOR", payload: error })
       })
       .finally(() => {
@@ -248,7 +244,7 @@ export const lihatJadwalKompetensiUser = (access_token) => {
       })
       .catch(error => {
         dispatch({ type: "ERROR_LIHAT_JADWAL_USER", payload: error })
-       
+
       })
   }
 }
@@ -308,83 +304,83 @@ export const addMUK = ({ access_token, formData, listAPL02, isExisting }) => {
   }
 }
 
-export const destroyMUK = ({access_token, passingPayload}) =>{
-  return(dispatch) => {
-   
+export const destroyMUK = ({ access_token, passingPayload }) => {
+  return (dispatch) => {
+
     axios.delete(`asesor/delete-muk/${passingPayload}`, {
-      headers:{access_token}
+      headers: { access_token }
     })
-    .then(({ data }) => {
-      dispatch({ type: "SUCCESS_UPDATE_MUK", payload: false })
-    })
-    .catch(error => {
-      dispatch({ type: "ERROR_UPDATE_MUK", payload: error })
-    })
+      .then(({ data }) => {
+        dispatch({ type: "SUCCESS_UPDATE_MUK", payload: false })
+      })
+      .catch(error => {
+        dispatch({ type: "ERROR_UPDATE_MUK", payload: error })
+      })
   }
 }
 
-export const simpanAPL01 = ({access_token, formData})=> {
-  return(dispatch) => {
+export const simpanAPL01 = ({ access_token, formData }) => {
+  return (dispatch) => {
     axios.post('peserta/pengisian-apl01', formData, {
-      headers:{
+      headers: {
         access_token
       }
     })
-    .then(({ data }) => {
-      dispatch({type:"SUCCESS_SIMPAN_APL01", payload:data})
-    })
-    .catch(error => {
-      dispatch({ type: "ERROR_SIMPAN_APL01", payload: error })
-    })
+      .then(({ data }) => {
+        dispatch({ type: "SUCCESS_SIMPAN_APL01", payload: data })
+      })
+      .catch(error => {
+        dispatch({ type: "ERROR_SIMPAN_APL01", payload: error })
+      })
   }
 }
 
-export const fetchListAPL02Peserta =({access_token})=> {
+export const fetchListAPL02Peserta = ({ access_token }) => {
   return (dispatch) => {
     axios.get('/peserta/get-apl02-pertanyaan', {
-      headers:{
+      headers: {
         access_token
       }
     })
-    .then(({data})=>{
-      dispatch({type:"SUCCESS_GET_LIST_APL02", payload:data})
-      
-    })
-    .catch(error => {
-      dispatch({ type: "ERROR_SIMPAN_APL01", payload: error })
-    })
+      .then(({ data }) => {
+        dispatch({ type: "SUCCESS_GET_LIST_APL02", payload: data })
+
+      })
+      .catch(error => {
+        dispatch({ type: "ERROR_SIMPAN_APL01", payload: error })
+      })
   }
 }
 
-export const simpanAPL02Peserta = ({access_token, formData}) => {
+export const simpanAPL02Peserta = ({ access_token, formData }) => {
   return (dispatch) => {
-    console.log(formData,'di action')
+
     axios.post('peserta/pengisian-apl02-detil', formData, {
-      headers:{
+      headers: {
         access_token
       }
     })
-    .then(({data})=> {
-      dispatch({type:"SUCCESS_SIMPAN_APL02_PESERTA", payload:data})
-    })
-    .catch(error => {
-      dispatch({type:"ERROR_SIMPAN_APL01", payload: error})
-    })
+      .then(({ data }) => {
+        dispatch({ type: "SUCCESS_SIMPAN_APL02_PESERTA", payload: data })
+      })
+      .catch(error => {
+        dispatch({ type: "ERROR_SIMPAN_APL01", payload: error })
+      })
   }
 }
 
-export const simpanPortfolioPeserta = ({access_token, links}) => {
+export const simpanPortfolioPeserta = ({ access_token, links }) => {
   return (dispatch) => {
     axios.post('peserta/isi-bukti-portofolio', links, {
-      headers : {
+      headers: {
         access_token
       }
     })
-    .then(({data})=> {
-      dispatch({type:"SUCCESS_SIMPAN_PORTFOLIO", payload: data})
-    })
-    .catch(error => {
-      dispatch({type:"ERROR_SIMPAN_APL01", payload: error})
-    })
+      .then(({ data }) => {
+        dispatch({ type: "SUCCESS_SIMPAN_PORTFOLIO", payload: data })
+      })
+      .catch(error => {
+        dispatch({ type: "ERROR_SIMPAN_APL01", payload: error })
+      })
   }
 }

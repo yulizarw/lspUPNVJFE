@@ -29,6 +29,7 @@ export default {
   body: {
     background: `url(${bgAdmin})`,
     backgroundSize: "cover",
+    backgroundAttachment: "fixed",
   },
   "*, *::before, *::after": {
     margin: 0,

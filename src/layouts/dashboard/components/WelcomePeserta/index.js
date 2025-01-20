@@ -11,7 +11,7 @@ import gif from "../../../../assets/images/signUppic.jpg"
 
 const WelcomePeserta = (props) => {
   const { userLogin, dataUser, lihatJadwalKompetensi, isiDataDiriPeserta, pilihSkemaKompetensi } = props
-
+console.log(dataUser,'Datauser')
   return (
     <Card sx={() => ({
       height: "340px",

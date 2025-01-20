@@ -264,8 +264,9 @@ import IsiKUK from "layouts/ScreenAsesor/IsiKUK";
 import isiAPL02 from "layouts/pesertaUjikom/isiAPL02";
 import isiPortfolio from "layouts/pesertaUjikom/isiPortfolio";
 import DashboardAdmin from "layouts/screenAdmin/DashboardAdmin";
-
-
+import ManageSkemaUjikom from "layouts/screenAdmin/ManageSkemaUjikom";
+import AsesorUploadMUK from "layouts/ScreenAsesor/addMUK";
+import PengesahanDokumen from "layouts/ScreenAsesor/pengesahanDokumen";
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import { jwtDecode } from "jwt-decode";
 
@@ -279,6 +280,8 @@ import "leaflet/dist/leaflet.css";
 // Route guard hooks
 
 import Cookies from "js-cookie";
+
+
 
 
 export default function App() {
@@ -310,7 +313,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
+     <CssBaseline />
       
       <Router>
         <Provider store={store}>
@@ -337,6 +340,13 @@ export default function App() {
             />
 
             {/* Routes for other pages */}
+            <ProtectedRoute
+              path="/skema-ujikom"
+              authLogin={authLogin}
+              // role={userRole}
+              // allowedRoles={["Admin"]}
+              component={ManageSkemaUjikom}
+            />
             <ProtectedRoute
               path="/jadwal-ujikom"
               authLogin={authLogin}
@@ -367,6 +377,17 @@ export default function App() {
               authLogin={authLogin}
               component={isiPortfolio}
             />
+            <ProtectedRoute
+              path="/asesor-upload-MUK"
+              authLogin={authLogin}
+              component={AsesorUploadMUK}
+            />
+            <ProtectedRoute
+              path="/asesor-pengesahan-dokumen"
+              authLogin={authLogin}
+              component={PengesahanDokumen}
+            />
+
 
             {/* Redirect if route doesn't match */}
             <Redirect from="*" to="/" />
