@@ -110,3 +110,35 @@ export const downloadSelectedMUK = ({ access_token, item }) => {
       });
   };
 };
+
+export const fetchParticipants = ({access_token, dataJadwal}) => {
+  return(dispatch) => {
+    axios.get (`user/admin/peserta-ujikom`, {
+      headers : {
+        access_token
+      }
+    })
+    .then (({data})=> {
+      dispatch({type: "SUCCESS_FETCH_PESERTA", payload:data})
+    })
+    .catch((err) => {
+      // Dispatch jika terjadi error
+      dispatch({ type: "ERROR_DOWNLOAD_MUK", payload: err });
+    })
+    .finally (()=> {
+      dispatch({type:"LOAD_FETCH_PESERTA"})
+    })
+  }
+}
+
+export const fetchDocumentsStatus = ({access_token}) => {
+  return(dispatch) => {
+    
+  }
+}
+
+export const downloadDocument = ({access_token}) => {
+  return(dispatch) => {
+    
+  }
+}

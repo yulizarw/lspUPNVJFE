@@ -5,6 +5,11 @@ const initialState = {
   listMUK : [],
   error:"",
   loadListMUK : true,
+
+  loading : true,
+
+  pesertaUjikomList: [],
+  errorFetchPeserta: ""
 }
 
 export const asesorReducers = (state = initialState, { type, payload }) => {
@@ -26,6 +31,15 @@ export const asesorReducers = (state = initialState, { type, payload }) => {
       return {...state, error : payload}
     case "LOAD_ALL_MUK":
       return {...state, loadListMUK:false}
+    
+    case "SUCCESS_FETCH_PESERTA":
+      return {...state, pesertaUjikomList:payload}
+    
+    case "ERROR_DOWNLOAD_MUK":
+      return {...state, errorFetchPeserta:payload}
+
+    case "LOAD_FETCH_PESERTA":
+      return {...state, loading:false}
     default:
       return state
   }

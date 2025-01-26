@@ -263,7 +263,7 @@ function Dashboard() {
     }
   };
   return (
-    <Grid container style={{ height: "100vh" }}>
+    <Grid container >
       <Grid
         item
         xs={2}

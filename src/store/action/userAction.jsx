@@ -239,7 +239,7 @@ export const lihatJadwalKompetensiUser = (access_token) => {
       }
     })
       .then(({ data }) => {
-        console.log(data, 'ini di action jadwal')
+       
         dispatch({ type: "SUCCESS_LIHAT_JADWAL_USER", payload: data })
       })
       .catch(error => {

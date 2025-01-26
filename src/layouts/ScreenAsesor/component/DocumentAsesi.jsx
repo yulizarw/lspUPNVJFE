@@ -16,7 +16,9 @@ import VuiButton from "components/VuiButton";
 import { BsCheckCircleFill, BsXCircleFill, BsRecycle, BsFileExcelFill, BsDownload } from "react-icons/bs";
 import { deleteSelectedMUK } from "store/action/asesorAction";
 import { downloadSelectedMUK } from "store/action/asesorAction";
-function DocumentChecklist() {
+
+
+function DocumentAsesi({doc}) {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userReducers.userLogin);
   const dataAsesor = useSelector((state) => state.userReducers.asesorData);
@@ -181,4 +183,4 @@ function DocumentChecklist() {
   );
 }
 
-export default DocumentChecklist;
+export default DocumentAsesi;
