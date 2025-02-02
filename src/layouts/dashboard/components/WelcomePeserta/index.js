@@ -11,7 +11,7 @@ import gif from "../../../../assets/images/signUppic.jpg"
 
 const WelcomePeserta = (props) => {
   const { userLogin, dataUser, lihatJadwalKompetensi, isiDataDiriPeserta, pilihSkemaKompetensi } = props
-console.log(dataUser,'Datauser')
+  console.log(dataUser, 'Datauser')
   return (
     <Card sx={() => ({
       height: "340px",
@@ -36,24 +36,70 @@ console.log(dataUser,'Datauser')
                 <VuiTypography color="text" variant="button" fontWeight="regular" mb="12px">
                   Selamat Datang Kembali,
                 </VuiTypography>
-                {userLogin.photo && (
-                  <VuiBox
-                    component="img"
-                    src={userLogin.photo}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = gif;
-                    }}
-                    sx={{
-                      width: "7rem", // Size of the image
-                      height: "7rem",
-                      borderRadius: "20%", // Makes the image circular
-                      objectFit: "cover", // Ensures the image covers the container without distortion
-                      marginBottom: "16px", // Adds some space between the image and the text below
-                      alignItems: "center",
-                    }}
-                  />
-                )}
+                <VuiBox display="flex" alignItems="center" justifyContent="space-between">
+
+                  {userLogin.photo && (
+                    <VuiBox
+                      component="img"
+                      src={userLogin.photo}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = gif;
+                      }}
+                      sx={{
+                        width: "7rem", // Size of the image
+                        height: "7rem",
+                        borderRadius: "20%", // Makes the image circular
+                        objectFit: "cover", // Ensures the image covers the container without distortion
+                        marginBottom: "16px", // Adds some space between the image and the text below
+                        alignItems: "center",
+                      }}
+                    />
+                  )}
+                  {/* Status Kompetensi */}
+                  {/* <VuiBox display="flex" alignItems="center" mt={1}>
+                    
+                    {dataUser.statusKompetensi === "Kompeten" ? (
+                      <>
+                        <Icon sx={{ color: "green", fontSize: 24, marginRight: "8px" }}>check_circle</Icon>
+                        <VuiTypography color="green" variant="h6">Kompeten</VuiTypography>
+                      </>
+                    ) : dataUser.statusKompetensi === "Tidak Kompeten" ? (
+                      <>
+                        <Icon sx={{ color: "red", fontSize: 24, marginRight: "8px" }}>cancel</Icon>
+                        <VuiTypography color="red" variant="h6">Tidak Kompeten</VuiTypography>
+                      </>
+                    ) : (
+                      <>
+                        <Icon sx={{ color: "gray", fontSize: 24, marginRight: "8px" }}>info</Icon>
+                        <VuiTypography color="gray" variant="h6">Bukan Periode Penilaian</VuiTypography>
+                      </>
+                    )}
+                  </VuiBox> */}
+                  <VuiBox display="flex" flexDirection="column">
+                    <VuiTypography color="white" variant="button" fontWeight="regular" mb="4px">
+                      Hasil Uji Kompetensi Anda:
+                    </VuiTypography>
+                    <VuiBox display="flex" alignItems="center">
+                      {dataUser.statusKompetensi === "Kompeten" ? (
+                        <>
+                          <Icon sx={{ color: "green", fontSize: 24, marginRight: "8px" }}>check_circle</Icon>
+                          <VuiTypography color="success" variant="h6" fontWeight="regular" mb="auto">Kompeten</VuiTypography>
+                        </>
+                      ) : dataUser.statusKompetensi === "Tidak Kompeten" ? (
+                        <>
+                          <Icon sx={{ color: "red", fontSize: 24, marginRight: "8px" }}>cancel</Icon>
+                          <VuiTypography color="error" variant="h6" fontWeight="regular" mb="auto">Tidak Kompeten</VuiTypography>
+                        </>
+                      ) : (
+                        <>
+                          <Icon sx={{ color: "gray", fontSize: 24, marginRight: "8px" }}>info</Icon>
+                          <VuiTypography color="text" variant="h6" fontWeight="regular" mb="auto">Bukan Periode Penilaian</VuiTypography>
+                        </>
+                      )}
+                    </VuiBox>
+                  </VuiBox>
+                </VuiBox>
                 <VuiTypography color="white" variant="h3" fontWeight="bold" mb="18px">
                   {dataUser.namaPeserta}
                 </VuiTypography>
@@ -276,3 +322,4 @@ console.log(dataUser,'Datauser')
 };
 
 export default WelcomePeserta;
+

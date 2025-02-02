@@ -15,10 +15,10 @@ import VuiButton from "components/VuiButton";
 // React icons
 import { BsCheckCircleFill, BsXCircleFill, BsRecycle, BsFileExcelFill, BsDownload } from "react-icons/bs";
 import { deleteSelectedMUK } from "store/action/asesorAction";
-import { downloadSelectedMUK } from "store/action/asesorAction";
+import { deleteFileAsesi} from "store/action/pesertaAction"
 
 
-function DocumentAsesi({ participant }) {
+function DocumentAsesi({ participant, handleDownload }) {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userReducers.userLogin);
   const dataAsesor = useSelector((state) => state.userReducers.asesorData);
@@ -29,31 +29,31 @@ function DocumentAsesi({ participant }) {
   const itemsPerPage = 5; // Jumlah item per halaman
 
   const documentItems = [
-    { id: 1, name: "FR.APL.01. Permohonan Sertifikasi Kompetensi", status: participant.apl01 },
-    { id: 2, name: "FR.APL.02. Asesmen Mandiri", status: participant.apl02 },
-    { id: 3, name: "Portofolio Peserta", status: participant.portofolioAsesi },
-    { id: 4, name: "FR.MAPA.01. Merencanakan Aktivitas dan Proses Asesmen", status: participant.mapa01 },
-    { id: 5, name: "FR.AK.01. Persetujuan Asesmen dan Kerahasiaan", status: participant.frak01 },
+    { id: 1, name: "FR.APL.01. Permohonan Sertifikasi Kompetensi", status: participant.apl01,alias:"apl01" },
+    { id: 2, name: "FR.APL.02. Asesmen Mandiri", status: participant.apl02, alias:"apl02"},
+    { id: 3, name: "Portofolio Peserta", status: participant.portofolioAsesi, alias:"portofolioAsesi" },
+    { id: 4, name: "FR.MAPA.01. Merencanakan Aktivitas dan Proses Asesmen", status: participant.mapa01, alias:"mapa01" },
+    { id: 5, name: "FR.AK.01. Persetujuan Asesmen dan Kerahasiaan", status: participant.frak01, alias:"frak01"},
     // { id: 6, name: "SKEMA Sertifikasi + Standar Kompetensi Kerja",status:participant. },
-    { id: 7, name: "FR. MAPA.02-Peta Instrumen Asesmen Hasil Pendekatan Asesmen dan Perencanaan Asesmen", status: participant.mapa02 },
+    { id: 7, name: "FR. MAPA.02-Peta Instrumen Asesmen Hasil Pendekatan Asesmen dan Perencanaan Asesmen", status: participant.mapa02,alias:"mapa02" },
     // { id: 8, name: "FR.AK.01. Persetujuan Asesmen dan Kerahasiaan", status:participant },
-    { id: 9, name: "FR.AK.04 Banding Asesmen", status: participant.frak04 },
-    { id: 10, name: "FR.IA.01 Ceklis Observasi Aktivitas di Tempat Kerja atau Tempat Kerja Simulasi", status: participant.fria01 },
-    { id: 11, name: "FR.IA.02 Tugas Praktik Demonstrasi", status: participant.fria02 },
-    { id: 12, name: "FR.IA.03 Pertanyaan untuk Mendukung Observasi", status: participant.fria03 },
-    { id: 13, name: "FR.IA.04 FR.IA.04A. Penjelasan Singkat Proyek -L-T DIT", status: participant.fria04a },
-    { id: 13, name: "FR.IA.04B. Penilaian Proyek Singkat L-T DIT", status: participant.fria04b },
-    { id: 14, name: "FR.IA.05 Pertanyaan Tertulis Pilihan ganda+Kunci Jawaban dan Lembar Jawab", status: participant.fria05 },
-    { id: 15, name: "FR.IA.06 Pertanyaan Tertulis Esai+Kunci Jawaban dan Lembar Jawab", status: participant.fria06 },
-    { id: 16, name: "FR.IA.07 Pertanyaan Lisan", status: participant.fria07 },
-    { id: 17, name: "FR.IA.08 Ceklis Verifikasi Portofolio", status: participant.fria08 },
-    { id: 18, name: "FR.IA.09 Pertanyaan Wawancara", status: participant.fria09 },
-    { id: 19, name: "FR.IA.10 Klarifikasi Bukti Pihak Ketiga", status: participant.fria10 },
-    { id: 20, name: "FR.IA.11 Ceklis Meninjau Materi Uji Kompetensi", status: participant.fria11 },
-    { id: 21, name: "FR.AK.02 Formulir Rekaman Asesmen Kompetensi", status: participant.frak02 },
-    { id: 22, name: "FR.AK.03 Umpan Balik dan Catatan Asesmen", status: participant.frak03 },
-    { id: 23, name: "FR.AK.05 Laporan Asesmen", status: participant.frak05 },
-    { id: 24, name: "FR.AK.06 Meninjau Proses Asesmen", status: participant.frak06 },
+    { id: 9, name: "FR.AK.04 Banding Asesmen", status: participant.frak04, alias:"frak04"},
+    { id: 10, name: "FR.IA.01 Ceklis Observasi Aktivitas di Tempat Kerja atau Tempat Kerja Simulasi", status: participant.fria01, alias:"fria01" },
+    { id: 11, name: "FR.IA.02 Tugas Praktik Demonstrasi", status: participant.fria02, alias:"fria02" },
+    { id: 12, name: "FR.IA.03 Pertanyaan untuk Mendukung Observasi", status: participant.fria03, alias:"fria03"},
+    { id: 13, name: "FR.IA.04 FR.IA.04A. Penjelasan Singkat Proyek -L-T DIT", status: participant.fria04a, alias:"fria04a" },
+    { id: 13, name: "FR.IA.04B. Penilaian Proyek Singkat L-T DIT", status: participant.fria04b, alias:"fria04b"},
+    { id: 14, name: "FR.IA.05 Pertanyaan Tertulis Pilihan ganda+Kunci Jawaban dan Lembar Jawab", status: participant.fria05 , alias:"fria05"},
+    { id: 15, name: "FR.IA.06 Pertanyaan Tertulis Esai+Kunci Jawaban dan Lembar Jawab", status: participant.fria06 , alias:"fria06"},
+    { id: 16, name: "FR.IA.07 Pertanyaan Lisan", status: participant.fria07, alias:"fria07"},
+    { id: 17, name: "FR.IA.08 Ceklis Verifikasi Portofolio", status: participant.fria08, alias:"fria08"},
+    { id: 18, name: "FR.IA.09 Pertanyaan Wawancara", status: participant.fria09 , alias:"fria09"},
+    { id: 19, name: "FR.IA.10 Klarifikasi Bukti Pihak Ketiga", status: participant.fria10, alias:"fria10" },
+    { id: 20, name: "FR.IA.11 Ceklis Meninjau Materi Uji Kompetensi", status: participant.fria11, alias:"fria11" },
+    { id: 21, name: "FR.AK.02 Formulir Rekaman Asesmen Kompetensi", status: participant.frak02 , alias:"frak02"},
+    { id: 22, name: "FR.AK.03 Umpan Balik dan Catatan Asesmen", status: participant.frak03 , alias:"frak03"},
+    { id: 23, name: "FR.AK.05 Laporan Asesmen", status: participant.frak05, alias:"frak05" },
+    { id: 24, name: "FR.AK.06 Meninjau Proses Asesmen", status: participant.frak06, alias:"frak06" },
   ];
 
   useEffect(() => {
@@ -70,7 +70,7 @@ function DocumentAsesi({ participant }) {
   useEffect(() => {
 
     const mappedChecklist = documentItems.map((item) => {
-      console.log(item.status)
+      
       return {
         ...item,                                                                                                    
         uploaded:                                                                                                                                                                       !!item.status,
@@ -96,15 +96,11 @@ function DocumentAsesi({ participant }) {
     currentPage * itemsPerPage
   );
 
-  const handleDownload = (item) => {
-    // console.log(item)
-    dispatch(downloadSelectedDocument({ access_token: userLogin.access_token, item }))
 
-  }
 
   const handleDelete = (item) => {
-
-    dispatch(deleteSelectedMUK({ access_token: userLogin.access_token, id: item.id }))
+    console.log(item)
+    dispatch(deleteFileAsesi({ access_token: userLogin.access_token, dokumen:item.alias }))
     history.push('/')
   }
 

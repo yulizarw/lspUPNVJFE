@@ -37,6 +37,8 @@ import JadwalUjikom from "layouts/pesertaUjikom/jadwalUjikom";
 import TableLengkapiDataDiriAsesor from "layouts/ScreenAsesor/TableLengkapiIsiData"
 import TableJadwalAsesor from "layouts/ScreenAsesor/TableJadwalAsesor"
 import routesSidenavAsesor from "../ScreenAsesor/Sidenav/routes"
+import routesSidenavAdmin from "../screenAdmin/Sidenav/routes"
+import routesSidenavPeserta from "../pesertaUjikom/Sidenav/routes"
 
 // React icons
 import { IoIosRocket } from "react-icons/io";
@@ -61,12 +63,13 @@ import { fetchDataPribadi, fetchJadwalUjikomPeserta, fetchAllJadwal, fetchDataDi
 //loader
 import Lottie from "react-lottie";
 import * as loaderData from "../../assets/loader/lottieLego.json"
+
 import TablePilihSkema from "./components/TabelJadwalUjikomAll/tablePilihSkema";
 import ReferralTrackingAsesor from "layouts/ScreenAsesor/ReferralTrackingAsesor";
+
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
-
-
 import Sidenav from "../ScreenAsesor/Sidenav/index"
+
 import { getAllMUKList } from "store/action/asesorAction";
 
 function Dashboard() {
@@ -274,12 +277,20 @@ function Dashboard() {
           flexDirection: "column",
         }}
       >
-        <Sidenav color={sidenavColor}
+        <Sidenav
+          color={sidenavColor}
           brand=""
           brandName="LSP UPNVJ"
-          routes={routesSidenavAsesor}
+          routes={
+            userLogin?.role === "Asesor"
+              ? routesSidenavAsesor
+              : userLogin?.role === "Peserta Ujikom"
+                ? routesSidenavPeserta
+                : userLogin?.role==="Admin" ? routesSidenavAdmin  : null// Role ketiga misalnya "admin"
+          }
           onMouseEnter={handleOnMouseEnter}
-          onMouseLeave={handleOnMouseLeave} />
+          onMouseLeave={handleOnMouseLeave}
+        />
       </Grid>
       <Grid item xs={10} style={{ padding: "20px" }}>
         <DashboardNavbar userLogin={userLogin} signOut={signOut} backToHome={backToHome} />

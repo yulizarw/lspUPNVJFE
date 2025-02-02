@@ -62,7 +62,7 @@ const initialState = {
   // portfolio peserta
   statusPostPortfolioPeserta: "",
 
-
+  listMUK :[],
 
 }
 
@@ -191,6 +191,9 @@ export const userReducers = (state = initialState, { type, payload }) => {
     
     case "SUCCESS_SIMPAN_PORTFOLIO" :
       return {...state, statusPostPortfolioPeserta:payload}
+    
+    case "SUCCESS_GET_LIST_MUK":
+      return {...state, listMUK : payload}
     
     default:
       return state

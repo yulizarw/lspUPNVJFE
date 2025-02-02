@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
-import { getAllMUKList } from "store/action/asesorAction";
+import { getAllMUKList } from "store/action/pesertaAction";
 import Table from "../../../examples/Tables/Table/index"; // Assuming the Table file path is correct
 import { Pagination } from "@mui/material";
 
@@ -15,12 +15,12 @@ import VuiButton from "components/VuiButton";
 // React icons
 import { BsCheckCircleFill, BsXCircleFill, BsRecycle, BsFileExcelFill, BsDownload } from "react-icons/bs";
 import { deleteSelectedMUK } from "store/action/asesorAction";
-import { downloadSelectedMUK } from "store/action/asesorAction";
-function DocumentChecklist() {
+import { downloadSelectedMUK, deleteFileAsesi } from "store/action/pesertaAction";
+function DocumentChecklist({dataUser}) {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userReducers.userLogin);
   const dataAsesor = useSelector((state) => state.userReducers.asesorData);
-  const listMUK = useSelector((state) => state.asesorReducers.listMUK);
+  const listMUK = useSelector((state) => state.userReducers.listMUK);
   const history = useHistory();
   const [checklist, setChecklist] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,34 +55,42 @@ function DocumentChecklist() {
   ];
 
   useEffect(() => {
-    if (userLogin?.access_token && dataAsesor) {
+    if (userLogin?.access_token && dataUser) {
       dispatch(
         getAllMUKList({
           access_token: userLogin.access_token,
-          namaSkema: dataAsesor.Asesor.SkemaUjikom.namaSkema,
+          namaSkema: dataUser.SkemaUjikom.namaSkema,
         })
       );
     }
-  }, [dispatch, userLogin, dataAsesor]);
-
+  }, [dispatch, userLogin, dataUser]);
   useEffect(() => {
-    if (listMUK?.file) {
+    if (listMUK?.file) {  // Pengecekan ini sudah cukup aman
       const mappedChecklist = checklistItems.map((item) => {
         const uploadedFile = listMUK.file.find((file) =>
           file.fileName.includes(item.name)
         );
-       
+  
         return {
           ...item,
           uploaded: !!uploadedFile,
           filePath: uploadedFile?.path || null,
-          id:uploadedFile?.id,
-          fileName:uploadedFile?.fileName
+          id: uploadedFile?.id,
+          fileName: uploadedFile?.fileName
         };
       });
       setChecklist(mappedChecklist);
+    } else {
+      setChecklist(checklistItems.map(item => ({
+        ...item,
+        uploaded: false,
+        filePath: null,
+        id: null,
+        fileName: null
+      })));
     }
   }, [listMUK]);
+  
 
   const columns = [
     { name: "Nama Dokumen", align: "left" },
@@ -99,21 +107,14 @@ function DocumentChecklist() {
 
   const handleDownload = (item) => {
     dispatch(downloadSelectedMUK({access_token:userLogin.access_token, item:item,}))
-   
   } 
 
-  const handleDelete = (item) => {
-    
-    dispatch(deleteSelectedMUK({access_token:userLogin.access_token, id:item.id}))
-    history.push('/')
-  }
 
   const rows = paginatedChecklist.map((item) => ({
     "Nama Dokumen": item.name,
     Status: item.uploaded ? "Uploaded" : "Not Uploaded",
     Action: item.uploaded ? (
       <>
-  
         <VuiButton
           style={{
             marginLeft: "1rem",
@@ -129,19 +130,6 @@ function DocumentChecklist() {
         
         </VuiButton>
 
-        <VuiButton
-          style={{
-            marginLeft: "1rem",
-            padding: "8px 16px",  // Padding untuk tombol lebih lebar
-            // display: "flex",      // Menggunakan Flexbox
-            alignItems: "center", // Menjaga ikon dan teks berada pada garis tengah
-            justifyContent: "center", // Agar isi tombol terpusat
-          }}
-          color="error"
-          onClick={(e)=> handleDelete(item)}
-        >
-          <BsFileExcelFill size="18px"  /> {/* Menambahkan margin di kanan ikon */}
-        </VuiButton>
        
       </>
     ) : null,
@@ -154,6 +142,7 @@ function DocumentChecklist() {
 
   return (
     <div>
+     
       <Table columns={columns} rows={rows} />
       <div style={{ display: "flex", justifyContent: "center", marginTop: 16, color: "white" }}>
         {/* <Pagination

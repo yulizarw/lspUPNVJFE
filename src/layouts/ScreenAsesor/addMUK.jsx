@@ -754,7 +754,8 @@ function AsesorUploadMUK() {
                   <MenuItem value="FR.IA.01 Ceklis Observasi Aktivitas di Tempat Kerja atau Tempat Kerja Simulasi">FR.IA.01 Ceklis Observasi Aktivitas di Tempat Kerja atau Tempat Kerja Simulasi</MenuItem>
                   <MenuItem value="FR.IA.02 Tugas Praktik Demonstrasi">FR.IA.02 Tugas Praktik Demonstrasi</MenuItem>
                   <MenuItem value="FR.IA.03 Pertanyaan untuk Mendukung Observasi">FR.IA.03 Pertanyaan untuk Mendukung Observasi</MenuItem>
-                  <MenuItem value="FR.IA.04 Penjelasan Singkat Proyek Terkait Pekerjaan/Kegiatan Terstruktur Lainnya">FR.IA.04 Penjelasan Singkat Proyek Terkait Pekerjaan/Kegiatan Terstruktur Lainnya</MenuItem>
+                  <MenuItem value="FR.IA.04 FR.IA.04A. Penjelasan Singkat Proyek -L-T DIT">FR.IA.04A. Penjelasan Singkat Proyek -L-T DIT</MenuItem>
+                  <MenuItem value="FR.IA.04B. Penilaian Proyek Singkat L-T DIT">FR.IA.04B. Penilaian Proyek Singkat L-T DIT</MenuItem>
                   <MenuItem value="FR.IA.05 Pertanyaan Tertulis Pilihan ganda+Kunci Jawaban dan Lembar Jawab">FR.IA.05 Pertanyaan Tertulis Pilihan ganda+Kunci Jawaban dan Lembar Jawab</MenuItem>
                   <MenuItem value="FR.IA.06 Pertanyaan Tertulis Esai+Kunci Jawaban dan Lembar Jawab">
                     FR.IA.06 Pertanyaan Tertulis Esai+Kunci Jawaban dan Lembar Jawab

@@ -267,6 +267,9 @@ import DashboardAdmin from "layouts/screenAdmin/DashboardAdmin";
 import ManageSkemaUjikom from "layouts/screenAdmin/ManageSkemaUjikom";
 import AsesorUploadMUK from "layouts/ScreenAsesor/addMUK";
 import PengesahanDokumen from "layouts/ScreenAsesor/pengesahanDokumen";
+import PenilaianStatusKompeten from "layouts/ScreenAsesor/penilaianStatusKompeten";
+import  UnduhKUK  from "layouts/pesertaUjikom/UnduhMUK";
+import UnggahDokumen from "layouts/pesertaUjikom/UnggahDokumen";
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import { jwtDecode } from "jwt-decode";
 
@@ -287,7 +290,7 @@ import Cookies from "js-cookie";
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
   const { pathname } = useLocation();
-
+  const a = 'a'
   const [authLogin, setAuthLogin] = useState(false);
   // const [userRole, setUserRole] = useState(null); // State untuk menyimpan role user
 
@@ -386,6 +389,21 @@ export default function App() {
               path="/asesor-pengesahan-dokumen"
               authLogin={authLogin}
               component={PengesahanDokumen}
+            />
+            <ProtectedRoute
+              path="/penilaian-kompetensi"
+              authLogin={authLogin}
+              component={PenilaianStatusKompeten}
+            />
+            <ProtectedRoute
+              path="/unduh-muk"
+              authLogin={authLogin}
+              component={UnduhKUK}
+            />
+            <ProtectedRoute
+              path="/unggah-dokumen"
+              authLogin={authLogin}
+              component={UnggahDokumen}
             />
 
 

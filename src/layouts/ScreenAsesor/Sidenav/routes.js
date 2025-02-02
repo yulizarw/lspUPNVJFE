@@ -89,9 +89,9 @@ const routesSidenavAsesor = [
   },
   {
     type: "collapse",
-    name: "Laporan Ujikom",
+    name: "Penilaian Status Kompeten",
     key: "Laporan",
-    route: "/dashboard-admin",
+    route: "/penilaian-kompetensi",
     icon: <HiOutlineDocumentReport size="15px" color="inherit" />,
     component: RTL,
     noCollapse: true,

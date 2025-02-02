@@ -1,39 +1,17 @@
 import axios from '../../config/axios'
 
 
-export const asesorPostMUK = ({access_token, formData}) => {
-  return(dispatch) => {
-    console.log(access_token)
-    axios.post ('asesor/upload-muk', formData, {
-       headers:{
-        access_token
-       }
-    })
-    .then(({data})=>{
-      alert ("File uploaded successfully!");
-      dispatch({type:"SUCCESS_UPLOAD_MUK", payload:"success"})
-    })
-  .catch(err => {
-    // dispatch({ type: "ERROR_ALL_JADWAL", payload: err })
-    dispatch({ type: "ERROR_UPLOAD_MUK", payload: err })
-  })
-  .finally(() => {
-    dispatch({ type: "RESET" })
-  })
-  }
-}
-
 export const getAllMUKList = ({access_token, namaSkema}) => {
   return(dispatch)=>{
- 
-    axios.get(`asesor/getAllMUK/${namaSkema}`, {
+    console.log(namaSkema,'di peserta action')
+    axios.get(`peserta/getAllMUK/${namaSkema}`, {
       headers:{
         access_token
       }
     })
     
     .then(({data})=>{
-    
+      
       dispatch({type:"SUCCESS_GET_LIST_MUK", payload:data})
     })
     .catch(err => {
@@ -47,25 +25,10 @@ export const getAllMUKList = ({access_token, namaSkema}) => {
   }
 }
 
-export const deleteSelectedMUK = ({access_token, id}) => {
-  return (dispatch)=> {
-    axios.delete(`asesor/deleteMUK/${id}`,{
-      headers:{
-        access_token
-      }
-    })
-    .then(({data})=>{
-      dispatch({type:"SUCCESS_DELETE_MUK",payload:data})
-    })
-    .catch(err => {
-      dispatch({ type: "ERROR_GET_LIST_MUK", payload: err })
-    })
-  }
-} 
 export const downloadSelectedMUK = ({ access_token, item }) => {
   return (dispatch) => {
     axios
-      .get(`asesor/downloadFileMUK/${item.id}`, {
+      .get(`peserta/download-stream/${item.fileName}`, {
         headers: {
           access_token,
         },
@@ -111,62 +74,44 @@ export const downloadSelectedMUK = ({ access_token, item }) => {
   };
 };
 
-export const fetchParticipants = ({access_token, dataJadwal}) => {
+export const asesiPostFile = ({access_token, formData}) => {
   return(dispatch) => {
-    axios.get (`user/admin/peserta-ujikom`, {
-      headers : {
+    console.log(formData.dokumen,'disini sekarang')
+    axios.post ('peserta/upload-file', formData, {
+       headers:{
         access_token
-      }
-    })
-    .then (({data})=> {
-      dispatch({type: "SUCCESS_FETCH_PESERTA", payload:data})
-    })
-    .catch((err) => {
-      // Dispatch jika terjadi error
-      dispatch({ type: "ERROR_DOWNLOAD_MUK", payload: err });
-    })
-    .finally (()=> {
-      dispatch({type:"LOAD_FETCH_PESERTA"})
-    })
-  }
-}
-
-export const updateCompetencyStatus= ({participantId, status, access_token}) => {
-  return(dispatch) => {
-    console.log(status)
-    axios.post(`asesor/penilaianAsesi/${participantId}`, {status}, {
-      headers:{
-        access_token
-      }
+       }
     })
     .then(({data})=>{
-      dispatch({type:"SUCCESS_UPDATE_KOMPETENSI", payload:data})
+      alert ("File uploaded successfully!");
+      dispatch({type:"SUCCESS_UPLOAD_MUK", payload:"success"})
     })
-    .catch((err)=> {
-      dispatch({ type: "ERROR_UPDATE_KOMPETENSI", payload: err });
-    })
+  .catch(err => {
+    // dispatch({ type: "ERROR_ALL_JADWAL", payload: err })
+    dispatch({ type: "ERROR_UPLOAD_MUK", payload: err })
+  })
+  .finally(() => {
+    dispatch({ type: "RESET" })
+  })
   }
 }
 
-// export const submitCompetencyStatus= ({access_token}) => {
-//   return(dispatch) => {
-    
-//   }
-// }
 
-export const downloadSelectedDocument = ({ access_token, item }) => {
+export const downloadFileAsesi = ({ access_token, item }) => {
   return (dispatch) => {
-    console.log(item.status,'filepath')
+    console.log(item.alias, "action");
+
     axios
-      .get(`/asesor/downloadFileAsesi/${item.id}?filePath=${encodeURIComponent(item.status)}`, {
+      .get(`/peserta/getMUK/${item.alias}`, {
         headers: {
           access_token,
         },
-        responseType: "blob", // Respons berupa Blob untuk file binary
+        responseType: "blob", // Pastikan response sebagai Blob
       })
       .then((response) => {
+        // Ambil nama file dari header "Content-Disposition" (jika tersedia)
         const contentDisposition = response.headers["content-disposition"];
-        let fileName = item.name; // Gunakan nama dari item sebagai default
+        let fileName = item.name; // Nama default dari item.name
 
         if (contentDisposition) {
           const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
@@ -175,30 +120,60 @@ export const downloadSelectedDocument = ({ access_token, item }) => {
           }
         }
 
-        const mimeType = response.data.type; // Tipe file dari Blob
+        // Pastikan ekstensi file sesuai dengan MIME type
+        const mimeType = response.headers["content-type"] || "application/octet-stream";
         const extension =
           mimeType === "application/pdf"
             ? ".pdf"
             : mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             ? ".docx"
             : "";
+
         if (extension && !fileName.endsWith(extension)) {
           fileName = fileName.replace(/\.[^/.]+$/, "") + extension;
         }
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        // Buat URL dari Blob
+        const blob = new Blob([response.data], { type: mimeType });
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", fileName); // Nama file untuk diunduh
+        link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
-        link.parentNode.removeChild(link);
 
+        // Bersihkan elemen setelah digunakan
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        // Dispatch jika sukses
         dispatch({ type: "SUCCESS_DOWNLOAD_MUK", payload: response.data });
       })
       .catch((err) => {
+        console.error("Error downloading file:", err);
         dispatch({ type: "ERROR_DOWNLOAD_MUK", payload: err });
       });
   };
 };
 
+export const deleteFileAsesi = ({access_token, dokumen}) => {
+  return(dispatch) => {
+    axios.delete(`/peserta/deleteFileAsesi/${dokumen}`,{
+      headers:{
+        access_token
+      }
+    })
+    .then(({data})=> {
+      // Jika delete berhasil, lakukan refresh data
+      if (data) {
+        alert('File berhasil dihapus');
+        refreshData(); // Fungsi untuk melakukan refresh data
+      }
+      dispatch({type:"SUCCESS_DELETE_FILE"})
+    })
+    .catch((err) => {
+      // console.error("Error downloading file:", err);
+      dispatch({ type: "ERROR_DELETE_FILE", payload: err });
+    });
+  }
+}
