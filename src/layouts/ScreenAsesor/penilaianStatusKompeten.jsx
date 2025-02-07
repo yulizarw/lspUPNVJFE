@@ -74,6 +74,7 @@ function PenilaianStatusKompeten() {
   
     // Simpan status ke backend
     dispatch(updateCompetencyStatus({ participantId, status, access_token: userLogin.access_token }));
+    refreshData()
   };
   
   // Define rows untuk tabel berdasarkan paginatedParticipants

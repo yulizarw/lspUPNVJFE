@@ -89,7 +89,7 @@ const WelcomePeserta = (props) => {
                       ) : dataUser.statusKompetensi === "Tidak Kompeten" ? (
                         <>
                           <Icon sx={{ color: "red", fontSize: 24, marginRight: "8px" }}>cancel</Icon>
-                          <VuiTypography color="error" variant="h6" fontWeight="regular" mb="auto">Tidak Kompeten</VuiTypography>
+                          <VuiTypography color="error" variant="h6" fontWeight="regular" mb="auto">Belum Kompeten</VuiTypography>
                         </>
                       ) : (
                         <>

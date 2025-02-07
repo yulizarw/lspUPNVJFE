@@ -270,6 +270,7 @@ import PengesahanDokumen from "layouts/ScreenAsesor/pengesahanDokumen";
 import PenilaianStatusKompeten from "layouts/ScreenAsesor/penilaianStatusKompeten";
 import  UnduhKUK  from "layouts/pesertaUjikom/UnduhMUK";
 import UnggahDokumen from "layouts/pesertaUjikom/UnggahDokumen";
+import PengurusanTUK from "layouts/screenAdmin/PengurusanTUK";
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import { jwtDecode } from "jwt-decode";
 
@@ -404,6 +405,11 @@ export default function App() {
               path="/unggah-dokumen"
               authLogin={authLogin}
               component={UnggahDokumen}
+            />
+            <ProtectedRoute
+              path="/pengurusan-tuk"
+              authLogin={authLogin}
+              component={PengurusanTUK}
             />
 
 

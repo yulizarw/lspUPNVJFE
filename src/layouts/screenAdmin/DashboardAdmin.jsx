@@ -311,7 +311,7 @@ function DashboardAdmin() {
         <VuiBox py={3}>
           {/* Content goes here */}
           {/* <div>Main Content Area</div> */}
-          <VuiBox py={0} mb={3}>
+          {/* <VuiBox py={0} mb={3}>
             <Grid container spacing="18px">
               <Grid item xs={12} lg={8} xl={5} spacing={3}>
                 {userLogin.role === 'Peserta Ujikom' ?
@@ -325,9 +325,9 @@ function DashboardAdmin() {
 
               </Grid>
 
-              <Grid item xs={12} lg={8} xl={7}>
+              <Grid item xs={12} lg={8} xl={7}> */}
                 {/* detil TUK */}
-                {userLogin.role == "Peserta Ujikom" ? (
+                {/* {userLogin.role == "Peserta Ujikom" ? (
                   <ReferralTracking dataUser={dataUser} allJadwal={allJadwal} jadwalPeserta={jadwalPeserta} jadwalUjiUser={jadwalUjiUser} />
                 )
                   : userLogin.role == "Asesor" ? (<ReferralTrackingAsesor allJadwal={allJadwal} dataAsesor={dataAsesor} dataUser={dataUser} jadwalUjiUser={jadwalUjiUser} />) :
@@ -336,13 +336,13 @@ function DashboardAdmin() {
                 }
 
               </Grid>
-            </Grid>
-          </VuiBox>
-          <Grid mb={3} container spacing={3} direction="row" justifyContent="center" alignItems="stretch">
+            </Grid> */}
+          {/* </VuiBox> */}
+          {/* <Grid mb={3} container spacing={3} direction="row" justifyContent="center" alignItems="stretch">
             <Grid item xs={12} md={6} lg={8}>
               {renderTableContent()}
             </Grid>
-            {/* {userLogin?.role === 'Peserta Ujikom' && dataUser} */}
+            
 
             <Grid item xs={12} md={6} lg={4}>
               {userLogin.role === 'Peserta Ujikom' || userLogin.role === 'Admin' ?
@@ -356,9 +356,9 @@ function DashboardAdmin() {
               }
 
             </Grid>
-          </Grid>
+          </Grid> */}
         </VuiBox>
-        <Footer />
+        {/* <Footer /> */}
       </Grid>
     </Grid>
 
